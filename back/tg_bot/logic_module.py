@@ -87,6 +87,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
         greeting_text = self.get_translated_message("greeting")
         if greeting_text:
             self.bot.send_message(chat_id, greeting_text)
+            self.send_menu(chat_id)
         raise EndOfLogicException
 
     def send_menu(self, chat_id):
@@ -158,7 +159,6 @@ class DjangoRegisterBotLogicModule(LogicModule):
             self.save_selected_language(call.message.chat.id, lang_label)
             self.bot.delete_message(call.message.chat.id, call.message.message_id)
             self.send_greeting(call.message.chat.id)
-            self.send_menu(call.message.chat.id)
 
         @bot.callback_query_handler(func=lambda call: "stage:" in call.data)
         @end_of_logic_catcher
