@@ -12,10 +12,10 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Bot Api",
         default_version='v1',
-        url='https://telbot.refugee.ru/',
         description="It is API for changes and controls of Bot"
     ),
     public=True,
+    url='https://telbot.refugee.ru/',
     permission_classes=(permissions.AllowAny,)
 )
 
