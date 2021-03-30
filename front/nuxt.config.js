@@ -43,7 +43,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'https://telbot.refugee.ru'
+    baseURL: 'https://telbot.refugee.ru/'
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
