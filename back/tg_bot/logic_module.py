@@ -89,6 +89,16 @@ class DjangoRegisterBotLogicModule(LogicModule):
             self.bot.send_message(chat_id, greeting_text)
         raise EndOfLogicException
 
+    def send_menu(self, chat_id):
+        markup = telebot.types.ReplyKeyboardMarkup()
+        markup.row(
+            telebot.types.KeyboardButton(self.get_translated_message("quiz_button"))
+        )
+        markup.row(
+            telebot.types.KeyboardButton(self.get_translated_message("about_button"))
+        )
+        self.bot.send_message(chat_id, "Menu", reply_markup=markup)
+
     @property
     def languages(self):
         """
@@ -112,6 +122,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
         @bot.message_handler(commands=["start"])
         @end_of_logic_catcher
         def start(message):
+            """ /start command handler """
             self.__middleware(message)
             if not self.languages:
                 bot.send_message(message.chat.id, "Technical problems")
@@ -119,15 +130,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
         @bot.message_handler(commands=["menu"])
         @end_of_logic_catcher
         def menu(message):
+            """ /menu command handler """
             self.__middleware(message)
-            markup = telebot.types.ReplyKeyboardMarkup()
-            markup.row(
-                telebot.types.KeyboardButton(self.get_translated_message("quiz_button"))
-            )
-            markup.row(
-                telebot.types.KeyboardButton(self.get_translated_message("about_button"))
-            )
-            bot.send_message(message.chat.id, "Menu", reply_markup=markup)
+            self.send_menu(message.chat.id)
 
         @bot.message_handler(commands=["quiz"])
         @end_of_logic_catcher
@@ -153,6 +158,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             self.save_selected_language(call.message.chat.id, lang_label)
             self.bot.delete_message(call.message.chat.id, call.message.message_id)
             self.send_greeting(call.message.chat.id)
+            self.send_menu(call.message.chat.id)
 
         @bot.callback_query_handler(func=lambda call: "stage:" in call.data)
         @end_of_logic_catcher
