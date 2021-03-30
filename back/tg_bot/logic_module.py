@@ -209,7 +209,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 if label == "quiz_button":
                     quiz_restart(message)
                 elif label == "about_button":
-                    pass
+                    menu(message)
 
         return bot
 
