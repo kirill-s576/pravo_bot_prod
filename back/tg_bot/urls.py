@@ -3,7 +3,7 @@ from .views import BotViewSet, bot_webhook
 from django.urls import path
 
 urlpatterns = [
-    path('bot/<token>', bot_webhook, name="bot_webhook")
+    path('bot/<token>/', bot_webhook, name="bot_webhook")
 ]
 
 router = SimpleRouter()
