@@ -203,14 +203,17 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
-            message = self.message_model.get_message_by_translate_text(message.text)
-            if message:
-                label = message.label
-                if label == "quiz_button":
-                    quiz_restart(message)
-                elif label == "about_button":
-                    menu(message)
-            else:
-                bot.send_message(message.chat.id, "Даже и не знаю, что на это ответить...")
+            try:
+                message = self.message_model.get_message_by_translate_text(message.text)
+                if message:
+                    label = message.label
+                    if label == "quiz_button":
+                        quiz_restart(message)
+                    elif label == "about_button":
+                        menu(message)
+                else:
+                    bot.send_message(message.chat.id, "Даже и не знаю, что на это ответить...")
+            except Exception as e:
+                bot.send_message(message.chat.id, str(e))
         return bot
 
