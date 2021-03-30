@@ -16,16 +16,17 @@ class Bot:
         self.token = token
         self.logic_module = logic_module
         self.logic_module_kwargs = logic_module_kwargs
+        self.prepared_bot: telebot.TeleBot = self.logic_module(telebot.TeleBot(self.token), **self.logic_module_kwargs).process_with_logic()
 
-    @property
-    def prepared_bot(self) -> telebot.TeleBot:
-        return self.logic_module(telebot.TeleBot(self.token), **self.logic_module_kwargs).process_with_logic()
+    def process_updates(self, updates):
+        self.prepared_bot.process_new_updates(updates)
 
     def start_polling(self):
         self.prepared_bot.polling(none_stop=True)
 
-    def set_web_hook(self):
-        pass
+    def set_web_hook(self, url):
+        response = self.prepared_bot.set_webhook(url)
+        return response
 
     def remove_web_hook(self):
         pass
@@ -40,4 +41,4 @@ if __name__ == '__main__':
         "quiz_interface": SessionInterface
     }
     bot = Bot(TOKEN, DjangoRegisterBotLogicModule, logic_module_kwarg)
-    bot.start_polling()
+    print(bot.set_web_hook(""))

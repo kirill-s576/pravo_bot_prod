@@ -109,6 +109,8 @@ CORS_ALLOW_HEADERS = ['*']
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "very_secret_token")
 
+SERVER_HOST = os.environ.get("SERVER_HOST", "very_secret_server_host")
+
 LANG_CHOICES = [
     ("RU", "Русский"),
     ("EN", "English"),

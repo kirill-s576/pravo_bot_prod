@@ -7,6 +7,8 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from django.conf import settings
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -15,7 +17,7 @@ schema_view = get_schema_view(
         description="It is API for changes and controls of Bot"
     ),
     public=True,
-    url='https://telbot.refugee.ru/',
+    url=settings.SERVER_HOST,
     permission_classes=(permissions.AllowAny,)
 )
 
@@ -28,5 +30,6 @@ urlpatterns = [
     path('auth/token/refresh', TokenRefreshView.as_view(), name='refresh_token'),
 
     path('quiz/', include("quiz.urls")),
+    path('tg_bot/', include("tg_bot.urls")),
     path('auth/', include("user.urls")),
 ]
