@@ -4,6 +4,6 @@ from .views import BotViewSet
 
 router = SimpleRouter()
 
-router.register("", BotViewSet, basename="Bot")
+router.register("bot", BotViewSet, basename="Bot")
 
 urlpatterns = router.urls
