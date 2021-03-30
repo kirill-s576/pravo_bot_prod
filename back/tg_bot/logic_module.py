@@ -148,6 +148,13 @@ class DjangoRegisterBotLogicModule(LogicModule):
             self.__middleware(message)
             self.send_menu(message.chat.id)
 
+        @bot.message_handler(commands=["about"])
+        @end_of_logic_catcher
+        def about(message):
+            """ /about command handler """
+            self.__middleware(message)
+            self.send_about(message.chat.id)
+
         @bot.message_handler(commands=["quiz"])
         @end_of_logic_catcher
         def quiz_restart(message):
@@ -203,14 +210,16 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
+            bot.send_message(message.chat.id, "Обработчик меню")
             try:
                 message = self.message_model.get_message_by_translate_text(message.text)
+                bot.send_message(message.chat.id, message.label)
                 if message:
                     label = message.label
                     if label == "quiz_button":
                         quiz_restart(message)
                     elif label == "about_button":
-                        self.send_about(message.chat.id)
+                        about(message)
                     else:
                         bot.send_message(message.chat.id, label)
                 else:
