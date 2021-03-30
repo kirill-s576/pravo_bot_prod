@@ -140,6 +140,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             self.__middleware(message)
             if not self.languages:
                 bot.send_message(message.chat.id, "Technical problems")
+            self.send_greeting(message.chat.id)
 
         @bot.message_handler(commands=["menu"])
         @end_of_logic_catcher
