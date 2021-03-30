@@ -7,8 +7,6 @@ urlpatterns = [
 ]
 
 router = SimpleRouter()
-
 router.register("", BotViewSet, basename="Bot")
-
 urlpatterns += router.urls
 

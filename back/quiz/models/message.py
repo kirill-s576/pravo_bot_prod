@@ -12,7 +12,7 @@ class Message(models.Model):
 
     def __str__(self):
         return self.default_text
-
+    
     def get_translate(self, language):
         translate_filter = self.messagetranslation_set.filter(language=language)
         if len(translate_filter) > 0:

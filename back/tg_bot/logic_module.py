@@ -213,7 +213,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             bot.send_message(message.chat.id, "Обработчик меню")
             try:
                 message = self.message_model.get_message_by_translate_text(message.text)
-                bot.send_message(message.chat.id, message.label)
+                bot.send_message(message.chat.id, str(message.__dict__))
                 if message:
                     label = message.label
                     if label == "quiz_button":
