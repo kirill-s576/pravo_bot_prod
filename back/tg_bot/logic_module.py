@@ -201,7 +201,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 for message in messages:
                     self.bot.send_message(call.message.chat.id, message["text"],parse_mode="html")
 
-        @bot.message_handler()
+        @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
             message = self.message_model.get_message_by_translate_text(message.text)
             if message:
