@@ -73,8 +73,8 @@ def bot_webhook(request, token):
     }
     if token == BOT_TOKEN:
         try:
-            # bot = Bot(BOT_TOKEN, DjangoRegisterBotLogicModule, logic_module_kwarg)
-            # bot.process_updates([telebot.types.Update.de_json(request.body.decode("utf-8"))])
+            bot = Bot(BOT_TOKEN, DjangoRegisterBotLogicModule, logic_module_kwarg)
+            bot.process_updates([telebot.types.Update.de_json(request.body.decode("utf-8"))])
             return JsonResponse({"success": True}, status=200)
         except Exception as e:
             return JsonResponse({"success": False}, status=500)

@@ -33,7 +33,8 @@ class Bot:
         return response
 
     def remove_web_hook(self):
-        pass
+        response = self.prepared_bot.remove_webhook()
+        return response
 
 
 if __name__ == '__main__':
@@ -45,5 +46,6 @@ if __name__ == '__main__':
         "quiz_interface": SessionInterface
     }
     bot = Bot(TOKEN, DjangoRegisterBotLogicModule, logic_module_kwarg)
-    # print(bot.set_web_hook("https://telbot.refugee.ru/tg_bot/bot/"))
+    # print(bot.set_web_hook("https://telbot.refugee.ru/tg_bot/bot"))
     print(bot.get_web_hook_info())
+    # print(bot.remove_web_hook())
