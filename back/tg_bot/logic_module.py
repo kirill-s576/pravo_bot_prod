@@ -210,7 +210,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     if label == "quiz_button":
                         quiz_restart(message)
                     elif label == "about_button":
-                        menu(message)
+                        self.send_about(message.chat.id)
                     else:
                         bot.send_message(message.chat.id, label)
                 else:
