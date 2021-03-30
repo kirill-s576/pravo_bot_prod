@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+
+  nginx:
+    build: ./nginx
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - static_volume:/code/back/static
+      - media_volume:/code/back/media
+    networks:
+      - web_nw
+    depends_on:
+      - web
+
+  web:
+    build: ./back
+    working_dir: /code/back
+    env_file:
+      - environments.env
+    command: bash /code/back/entrypoint.sh
+    volumes:
+      - .:/code
+      - static_volume:/code/back/static
+      - media_volume:/code/back/media
+    networks:
+      - web_nw
+    restart: always
+
+volumes:
+  static_volume:
+  media_volume:
+
+networks:
+  web_nw:
+    driver: bridge
