@@ -210,18 +210,14 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
-            bot.send_message(message.chat.id, "Обработчик меню")
             try:
-                message = self.message_model.get_message_by_translate_text(message.text)
-                bot.send_message(message.chat.id, str(message.__dict__))
+                db_message = self.message_model.get_message_by_translate_text(message.text)
                 if message:
-                    label = message.label
+                    label = db_message.label
                     if label == "quiz_button":
                         quiz_restart(message)
                     elif label == "about_button":
                         about(message)
-                    else:
-                        bot.send_message(message.chat.id, label)
                 else:
                     bot.send_message(message.chat.id, "Даже и не знаю, что на это ответить...")
             except Exception as e:
