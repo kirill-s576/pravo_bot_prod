@@ -33,7 +33,7 @@ class Bot:
 
 
 if __name__ == '__main__':
-    TOKEN = ""
+    TOKEN = "1502567339:AAG3aRZUjv4HTzJFH0bLaMnugn0EmHHJJww"
     logic_module_kwarg = {
         "language_model": Language,
         "message_model": Message,
@@ -41,4 +41,4 @@ if __name__ == '__main__':
         "quiz_interface": SessionInterface
     }
     bot = Bot(TOKEN, DjangoRegisterBotLogicModule, logic_module_kwarg)
-    print(bot.set_web_hook("https://telbot.refugee.ru/tg_bot"))
+    print(bot.set_web_hook("https://telbot.refugee.ru/tg_bot/bot/"))
