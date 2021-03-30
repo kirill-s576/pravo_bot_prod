@@ -15,3 +15,15 @@ class Message(models.Model):
             return translations_filter[0].text
         else:
             return self.text
+
+    @classmethod
+    def get_message_by_translate_text(cls, translate_text):
+        filtered_objects = cls.objects.filter(text=translate_text)
+        if len(filtered_objects) > 0:
+            return filtered_objects.first()
+        else:
+            filtered_objects = cls.objects.filter(messagetranslate__text=translate_text)
+            if len(filtered_objects) > 0:
+                return filtered_objects.first()
+            else:
+                return None

@@ -24,6 +24,7 @@ class Message(models.Model):
         translates = self.messagetranslation_set.all()
         return translates
 
+
 class StageMessage(models.Model):
 
     stage = models.ForeignKey("quiz.Stage", on_delete=models.CASCADE)

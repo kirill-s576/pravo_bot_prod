@@ -47,6 +47,10 @@ class DjangoRegisterBotLogicModule(LogicModule):
         self.user = None
 
     def __middleware(self, message):
+        """
+        Middleware layer.
+        We should use it in each bot handler.
+        """
         defaults = {
             "user_name": message.chat.username,
             "first_name": message.chat.first_name,
@@ -61,6 +65,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
             self.ask_language(message.chat.id)
 
     def get_translated_message(self, message_label):
+        """
+        Returns translated message by message label
+        """
         message_filter = self.message_model.objects.filter(label=message_label)
         if message_filter:
             translation = message_filter[0].get_translation(self.user.language)
@@ -69,6 +76,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
             return None
 
     def ask_language(self, chat_id):
+        """
+
+        """
         markup = telebot.types.InlineKeyboardMarkup()
         for language in self.languages:
             markup.row(telebot.types.InlineKeyboardButton(
@@ -99,6 +109,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
             telebot.types.KeyboardButton(self.get_translated_message("about_button"))
         )
         self.bot.send_message(chat_id, "Menu", reply_markup=markup)
+
+    def send_about(self, chat_id):
+        self.bot.send_message(chat_id, self.get_translated_message("about"))
 
     @property
     def languages(self):
@@ -190,7 +203,13 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
         @bot.message_handler()
         def menu_handler(message):
-            pass
+            message = self.message_model.get_message_by_translate_text(message.text)
+            if message:
+                label = message.label
+                if label == "quiz_button":
+                    quiz_restart(message)
+                elif label == "about_button":
+                    pass
 
         return bot
 
