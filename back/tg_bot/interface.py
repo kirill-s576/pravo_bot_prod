@@ -46,6 +46,6 @@ if __name__ == '__main__':
         "quiz_interface": SessionInterface
     }
     bot = Bot(TOKEN, DjangoRegisterBotLogicModule, logic_module_kwarg)
-    # print(bot.set_web_hook("https://telbot.refugee.ru/tg_bot/bot"))
-    print(bot.get_web_hook_info())
+    print(bot.set_web_hook("https://telbot.refugee.ru/tg_bot/bot/1502567339:AAG3aRZUjv4HTzJFH0bLaMnugn0EmHHJJww/"))
+    # print(bot.get_web_hook_info())
     # print(bot.remove_web_hook())

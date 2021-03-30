@@ -37,12 +37,13 @@ class LogicModule(ABC):
 
 class DjangoRegisterBotLogicModule(LogicModule):
 
-    def __init__(self, bot, language_model, message_model, user_model, quiz_interface, **kwargs):
+    def __init__(self, bot, language_model, message_model, user_model, quiz_interface, source: str = 'telegram', **kwargs):
         super().__init__(bot)
         self.language_model = language_model
         self.message_model = message_model
         self.user_model = user_model
         self.quiz_interface = quiz_interface
+        self.source = source
         self.user = None
 
     def __middleware(self, message):
@@ -103,7 +104,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
         return queryset.values("name", "label")
 
     def process_with_logic(self) -> telebot.TeleBot:
-
+        """
+        This method appends logic to bot.
+        """
         bot = self.bot
 
         @bot.message_handler(commands=["start"])
@@ -112,6 +115,35 @@ class DjangoRegisterBotLogicModule(LogicModule):
             self.__middleware(message)
             if not self.languages:
                 bot.send_message(message.chat.id, "Technical problems")
+
+        @bot.message_handler(commands=["menu"])
+        @end_of_logic_catcher
+        def menu(message):
+            self.__middleware(message)
+            markup = telebot.types.ReplyKeyboardMarkup()
+            markup.row(
+                telebot.types.KeyboardButton(self.get_translated_message("quiz_button"))
+            )
+            markup.row(
+                telebot.types.KeyboardButton(self.get_translated_message("about_button"))
+            )
+            bot.send_message(message.chat.id, "Menu", reply_markup=markup)
+
+        @bot.message_handler(commands=["quiz"])
+        @end_of_logic_catcher
+        def quiz_restart(message):
+            self.__middleware(message)
+            """ Start or restart quiz """
+            if not self.user.language:
+                self.ask_language(message.chat.id)
+            lang_label = self.user.language.label
+            quiz = self.quiz_interface(lang_label, 30001, message.chat.id, self.source)
+            stage = quiz.restart()
+            markup = telebot.types.InlineKeyboardMarkup()
+            for child in stage.children:
+                markup.row(telebot.types.InlineKeyboardButton(child["button"],
+                                                              callback_data=f"stage:{stage.id}:{child['id']}"))
+            self.bot.send_message(message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
 
         @bot.callback_query_handler(func=lambda call: "lang:" in call.data)
         @end_of_logic_catcher
@@ -131,7 +163,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             from_stage_id = int(call.data.split(":")[1])
             to_stage_id = int(call.data.split(":")[2])
             lang_label = self.user.language.label
-            quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, "site")
+            quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
             stage = quiz.get_next_stage(from_stage_id, to_stage_id)
 
             messages = list(stage.messages)
@@ -150,18 +182,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 for message in messages:
                     self.bot.send_message(call.message.chat.id, message["text"],parse_mode="html")
 
-        @bot.message_handler(commands=["quiz"])
-        @end_of_logic_catcher
-        def quiz_restart(message):
-            self.__middleware(message)
-            """ Start or restart quiz """
-            if not self.user.language:
-                self.ask_language(message.chat.id)
-            lang_label = self.user.language.label
-            quiz = self.quiz_interface(lang_label, 30001, message.chat.id, "site")
-            stage = quiz.restart()
-            markup = telebot.types.InlineKeyboardMarkup()
-            for child in stage.children:
-                markup.row(telebot.types.InlineKeyboardButton(child["button"], callback_data=f"stage:{stage.id}:{child['id']}"))
-            self.bot.send_message(message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
+        @bot.message_handler()
+        def menu_handler(message):
+            pass
+
         return bot
+
