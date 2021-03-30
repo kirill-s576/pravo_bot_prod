@@ -93,6 +93,9 @@ class StageViewSet(ViewSet):
         #     tree = json.loads(f.read())
         return Response(tree, status=200)
 
+    @swagger_auto_schema(
+        tags=['Stages']
+    )
     @action(methods=["POST"], detail=True)
     def add_message(self, request, pk=None):
         pass
