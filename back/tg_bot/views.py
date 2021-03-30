@@ -33,6 +33,18 @@ class BotViewSet(ViewSet):
     @swagger_auto_schema(
         tags=['Bot']
     )
+    def list(self, request):
+        return Response({}, status=200)
+
+    @swagger_auto_schema(
+        tags=['Bot']
+    )
+    def retrieve(self, request):
+        return Response({}, status=200)
+
+    @swagger_auto_schema(
+        tags=['Bot']
+    )
     def update(self, request, pk=None):
         logic_module_kwarg = {
             "language_model": Language,
