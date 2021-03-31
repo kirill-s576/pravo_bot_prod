@@ -186,7 +186,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
         def quiz_handler(call):
             """ Send next step or result for message """
             self.__middleware(call.message)
-            # self.bot.delete_message(call.message.chat.id, call.message.message_id)
+            self.bot.delete_message(call.message.chat.id, call.message.message_id)
             from_stage_id = int(call.data.split(":")[1])
             to_stage_id = int(call.data.split(":")[2])
             lang_label = self.user.language.label
