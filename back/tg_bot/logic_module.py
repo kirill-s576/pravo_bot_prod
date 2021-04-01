@@ -188,6 +188,18 @@ class DjangoRegisterBotLogicModule(LogicModule):
             self.__middleware(call.message)
             self.bot.delete_message(call.message.chat.id, call.message.message_id)
 
+            # Reply question and user answer
+            keyboard_buttons = call.message.reply_markup.keyboard[0]
+            keyboard_button = list(filter(lambda button: button.callback_data == call.data, keyboard_buttons))[0]
+            self.bot.send_message(
+                call.message.chat.id,
+                call.message.text
+            )
+            self.bot.send_message(
+                call.message.chat.id,
+                keyboard_button.text
+            )
+
             from_stage_id = int(call.data.split(":")[1])
             to_stage_id = int(call.data.split(":")[2])
             lang_label = self.user.language.label
