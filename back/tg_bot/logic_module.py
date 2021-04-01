@@ -197,7 +197,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             # Remove message, Reply question and user answer
             self.bot.delete_message(call.message.chat.id, call.message.message_id)
 
-            if to_stage_id != "back":
+            if to_stage_id != 0:
                 keyboard_buttons = call.message.reply_markup.keyboard
                 keyboard_button = list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
                 self.bot.send_message(
@@ -210,8 +210,8 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 )
                 stage = quiz.get_next_stage(from_stage_id, to_stage_id)
             else:
-                # self.bot.delete_message(call.message.chat.id, call.message.message_id - 1)
-                # self.bot.delete_message(call.message.chat.id, call.message.message_id - 2)
+                self.bot.delete_message(call.message.chat.id, call.message.message_id - 1)
+                self.bot.delete_message(call.message.chat.id, call.message.message_id - 2)
                 stage = quiz.get_previous_stage()
 
             messages = list(stage.messages)
@@ -226,7 +226,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 markup.row(telebot.types.InlineKeyboardButton(child["button"], callback_data=f"stage:{stage.id}:{child['id']}"))
             if len(stage.children) != 0:
                 markup.row(
-                    telebot.types.InlineKeyboardButton("<<<", callback_data=f"stage:{stage.id}:back")
+                    telebot.types.InlineKeyboardButton("<<<", callback_data=f"stage:{stage.id}:0")
                 )
 
             self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
