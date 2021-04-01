@@ -186,11 +186,11 @@ class DjangoRegisterBotLogicModule(LogicModule):
         def quiz_handler(call):
             """ Send next step or result for message """
             self.__middleware(call.message)
-            self.bot.delete_message(call.message.chat.id, call.message.message_id)
 
-            # Reply question and user answer
-            keyboard_buttons = call.message.reply_markup.keyboard[0]
-            keyboard_button = list(filter(lambda button: button.callback_data == call.data, keyboard_buttons))[0]
+            # Remove message, Reply question and user answer
+            self.bot.delete_message(call.message.chat.id, call.message.message_id)
+            keyboard_buttons = call.message.reply_markup.keyboard
+            keyboard_button = list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
             self.bot.send_message(
                 call.message.chat.id,
                 call.message.text
