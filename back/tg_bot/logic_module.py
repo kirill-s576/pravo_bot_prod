@@ -197,7 +197,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             )
             self.bot.send_message(
                 call.message.chat.id,
-                keyboard_button.text
+                keyboard_button[0].text
             )
 
             from_stage_id = int(call.data.split(":")[1])
