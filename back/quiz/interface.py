@@ -153,6 +153,9 @@ class SessionInterface(SimpleInterface):
         serializers = [StageResponseSerializer(stage, self.language_model) for stage in sorted_objects]
         return serializers
 
+    def finish_session(self):
+        self.session.finished = True
+        self.session.save()
 
 class SessionStatistic:
 
