@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+from django.db.models.query import QuerySet
 from .models import Session, Language, Stage
 from typing import List
+import datetime
 
 
 SESSION_LIFETIME = 1000
@@ -150,3 +152,65 @@ class SessionInterface(SimpleInterface):
         sorted_objects = [objects[id] for id in self.session.steps]
         serializers = [StageResponseSerializer(stage, self.language_model) for stage in sorted_objects]
         return serializers
+
+
+class SessionStatistic:
+
+    def __init__(self, sessions_queryset: QuerySet[Session]):
+        self.session_queryset = sessions_queryset
+
+    @property
+    def total_sessions_count(self) -> int:
+        """
+        Total sessions count
+        """
+        count = self.session_queryset.count()
+        return count
+
+    @property
+    def finished_sessions_count(self) -> int:
+        """
+        Finished sessions count
+        """
+        count = self.session_queryset.filter(finished=True).count()
+        return count
+
+    @property
+    def sessions_count_by_language(self) -> List[dict]:
+        """
+        Returns data in format
+        [
+            {
+                "language_id": 1,
+                "sessions_count": 15,
+                "sessions_count_percent": 15
+            }, ...
+        ]
+        """
+        languages = self.session_queryset.values_list("language", flat=True)
+        languages_list = list(languages)
+        all_length = len(languages_list)
+        unique = list(set(languages_list))
+        languages_final_list = [
+            {
+                "language_id": item,
+                "sessions_count": list(languages_list).count(item),
+                "sessions_count_percent": round(list(languages_list).count(item) / all_length * 100, 2)
+            } for item in unique
+        ]
+        return languages_final_list
+
+    def get_json(self):
+        return {
+            "total_sessions_count": self.total_sessions_count,
+            "finished_sessions_count": self.finished_sessions_count,
+            "sessions_count_by_language": self.sessions_count_by_language
+        }
+
+
+class PeriodSessionStatistic(SessionStatistic):
+
+    def __init__(self, date_from: datetime.datetime, date_to: datetime.datetime):
+        queryset = Session.objects.filter(created_at__gte=date_from, created_at__lte=date_to)
+        super().__init__(queryset)
+

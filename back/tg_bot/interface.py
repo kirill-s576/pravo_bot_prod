@@ -1,13 +1,4 @@
-import os
-import django
 import telebot
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-django.setup()
-
-from tg_bot.models import BotUser, Message, Language
-from quiz.interface import SimpleInterface, SessionInterface
-from tg_bot.logic_module import LogicModule, DjangoRegisterBotLogicModule
 
 
 class Bot:
@@ -35,17 +26,3 @@ class Bot:
     def remove_web_hook(self):
         response = self.prepared_bot.remove_webhook()
         return response
-
-
-if __name__ == '__main__':
-    TOKEN = "1502567339:AAG3aRZUjv4HTzJFH0bLaMnugn0EmHHJJww"
-    logic_module_kwarg = {
-        "language_model": Language,
-        "message_model": Message,
-        "user_model": BotUser,
-        "quiz_interface": SessionInterface
-    }
-    bot = Bot(TOKEN, DjangoRegisterBotLogicModule, logic_module_kwarg)
-    print(bot.set_web_hook("https://telbot.refugee.ru/tg_bot/bot/1502567339:AAG3aRZUjv4HTzJFH0bLaMnugn0EmHHJJww/"))
-    # print(bot.get_web_hook_info())
-    # print(bot.remove_web_hook())

@@ -21,7 +21,7 @@ def end_of_logic_catcher(func):
 
 class LogicModule(ABC):
 
-    def __init__(self, bot: telebot.TeleBot, **kwargs):
+    def __init__(self, bot: telebot.TeleBot):
         self.bot = bot
 
     @abstractmethod
@@ -187,6 +187,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             """ Send next step or result for message """
             self.__middleware(call.message)
             self.bot.delete_message(call.message.chat.id, call.message.message_id)
+
             from_stage_id = int(call.data.split(":")[1])
             to_stage_id = int(call.data.split(":")[2])
             lang_label = self.user.language.label
@@ -224,4 +225,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             except Exception as e:
                 bot.send_message(message.chat.id, str(e))
         return bot
+
+
+
 
