@@ -193,11 +193,11 @@ class DjangoRegisterBotLogicModule(LogicModule):
             keyboard_button = list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
             self.bot.send_message(
                 call.message.chat.id,
-                call.message.text
+                "⁉️" + call.message.text
             )
             self.bot.send_message(
                 call.message.chat.id,
-                keyboard_button[0].text
+                "✅" + keyboard_button[0].text
             )
 
             from_stage_id = int(call.data.split(":")[1])
