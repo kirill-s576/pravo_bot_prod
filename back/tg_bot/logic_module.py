@@ -198,6 +198,10 @@ class DjangoRegisterBotLogicModule(LogicModule):
             """ Send next step or result """
             self.__middleware(call.message)
             try:
+
+                # Remove question with answers
+                self.bot.delete_message(call.message.chat.id, call.message.message_id)
+
                 # Parse callback_data
                 from_stage_id = int(call.data.split(":")[1])
                 to_stage_id = int(call.data.split(":")[2])
@@ -209,13 +213,12 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 # Get user memory slot.
                 messages_memory = self.user.messages_memory
 
-                # Remove question with answers
-                self.bot.delete_message(call.message.chat.id, call.message.message_id)
-
-                # Reply question and user answer in pretty format.
                 if to_stage_id != 0:
+
                     # Get next stage for view
                     stage = quiz.get_next_stage(from_stage_id, to_stage_id)
+
+                    # Reply question and user answer in pretty format.
                     keyboard_buttons = call.message.reply_markup.keyboard
                     keyboard_button = list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
                     sended_message = self.bot.send_message(
@@ -227,8 +230,10 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     except:
                         messages_memory[str(from_stage_id)] = [sended_message.message_id]
                 else:
-                    # Get next stage for view
+
+                    # Get previous stage for view
                     stage, removed_stage_id = quiz.get_previous_stage()
+
                     # Remove messages for removed_stage.
                     for_remove_messages = messages_memory.get(str(removed_stage_id), [])
                     for message_id in for_remove_messages:
@@ -248,22 +253,24 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     for message in messages:
                         info_text += message["text"] + "\n\n"
 
+                    # Send info message.
                     sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
                     try:
                         messages_memory[str(stage.id)].append(sended_message.message_id)
                     except:
                         messages_memory[str(stage.id)] = [sended_message.message_id]
 
+                    # Send question with keyboard
                     markup = telebot.types.InlineKeyboardMarkup()
                     for child in stage.children:
                         markup.row(telebot.types.InlineKeyboardButton(child["button"],
                                                                       callback_data=f"stage:{stage.id}:{child['id']}"))
-                    if len(stage.children) != 0:
+                    if len(stage.children) != 0 and stage.id != 30001:
                         markup.row(
-                            telebot.types.InlineKeyboardButton("🔙 Back", callback_data=f"stage:{stage.id}:0")
+                            telebot.types.InlineKeyboardButton("🔙 Back",
+                                                               callback_data=f"stage:{stage.id}:0")
                         )
-
-                    sended_message = self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
+                    self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
 
                 else:
                     for message in messages:
