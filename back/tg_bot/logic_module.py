@@ -1,6 +1,7 @@
 import telebot
 from abc import ABC, abstractmethod
 from quiz.interface import BasicInterface
+import traceback
 
 
 class EndOfLogicException(Exception):
@@ -273,6 +274,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 self.user_model.save()
             except Exception as e:
                 self.bot.send_message(call.message.chat.id, str(e))
+                bot.send_message(call.message.chat.id, traceback.format_exc())
 
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
@@ -288,6 +290,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     bot.send_message(message.chat.id, "Даже и не знаю, что на это ответить...")
             except Exception as e:
                 bot.send_message(message.chat.id, str(e))
+                bot.send_message(message.chat.id, traceback.format_exc())
         return bot
 
 
