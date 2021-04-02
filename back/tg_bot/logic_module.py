@@ -177,10 +177,10 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 reply_markup=markup,
                 parse_mode="html"
             )
-            messages_memory = {}
+            messages_memory = dict()
             messages_memory[stage.id] = [sended_message.message_id]
-            self.user_model.messages_memory = messages_memory
-            self.user_model.save()
+            self.user.messages_memory = messages_memory
+            self.user.save()
 
 
         @bot.callback_query_handler(func=lambda call: "lang:" in call.data)
@@ -205,7 +205,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 # Initialize quiz interface.
                 lang_label = self.user.language.label
                 quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
-                messages_memory = self.user_model.messages_memory
+                messages_memory = self.user.messages_memory
 
                 # Remove question with answers
                 self.bot.delete_message(call.message.chat.id, call.message.message_id)
@@ -274,8 +274,8 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     except:
                         messages_memory[stage.id] = [sended_message.message_id]
 
-                self.user_model.messages_memory = messages_memory
-                self.user_model.save()
+                self.user.messages_memory = messages_memory
+                self.user.save()
 
             except Exception as e:
                 self.bot.send_message(call.message.chat.id, str(e))
