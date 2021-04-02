@@ -203,6 +203,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 # Initialize quiz interface.
                 lang_label = self.user.language.label
                 quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
+                messages_memory = self.user_model.messages_memory
 
                 # Remove question with answers
                 self.bot.delete_message(call.message.chat.id, call.message.message_id)
@@ -218,17 +219,17 @@ class DjangoRegisterBotLogicModule(LogicModule):
                         "⁉️" + call.message.text + "\n\n" + "✅" + keyboard_button[0].text
                     )
                     try:
-                        self.user_model.messages_memory[from_stage_id].append(sended_message.message_id)
+                        messages_memory[from_stage_id].append(sended_message.message_id)
                     except:
-                        self.user_model.messages_memory[from_stage_id] = [sended_message.message_id]
+                        messages_memory[from_stage_id] = [sended_message.message_id]
                 else:
                     # Get next stage for view
                     stage, removed_stage_id = quiz.get_previous_stage()
                     # Remove messages for removed_stage.
-                    for_remove_messages = self.user_model.messages_memory.get(removed_stage_id, [])
+                    for_remove_messages = messages_memory.get(removed_stage_id, [])
                     for message_id in for_remove_messages:
                         self.bot.delete_message(call.message.chat.id, message_id)
-                    self.user_model.messages_memory[removed_stage_id] = []
+                    messages_memory[removed_stage_id] = []
                 # Get info messages, which must be after question.
                 messages = list(stage.messages)
                 messages.sort(key=lambda x: x["index"])
@@ -241,9 +242,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
                     sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
                     try:
-                        self.user_model.messages_memory[stage.id].append(sended_message.message_id)
+                        messages_memory[stage.id].append(sended_message.message_id)
                     except:
-                        self.user_model.messages_memory[stage.id] = [sended_message.message_id]
+                        messages_memory[stage.id] = [sended_message.message_id]
 
                     markup = telebot.types.InlineKeyboardMarkup()
                     for child in stage.children:
@@ -257,9 +258,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
 
                     try:
-                        self.user_model.messages_memory[stage.id].append(sended_message.message_id)
+                        messages_memory[stage.id].append(sended_message.message_id)
                     except:
-                        self.user_model.messages_memory[stage.id] = [sended_message.message_id]
+                        messages_memory[stage.id] = [sended_message.message_id]
 
                 else:
                     for message in messages:
@@ -267,11 +268,13 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
 
                     try:
-                        self.user_model.messages_memory[stage.id].append(sended_message.message_id)
+                        messages_memory[stage.id].append(sended_message.message_id)
                     except:
-                        self.user_model.messages_memory[stage.id] = [sended_message.message_id]
+                        messages_memory[stage.id] = [sended_message.message_id]
 
+                self.user_model.messages_memory = messages_memory
                 self.user_model.save()
+
             except Exception as e:
                 self.bot.send_message(call.message.chat.id, str(e))
                 bot.send_message(call.message.chat.id, traceback.format_exc())
