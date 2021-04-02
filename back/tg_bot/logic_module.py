@@ -185,38 +185,39 @@ class DjangoRegisterBotLogicModule(LogicModule):
         @end_of_logic_catcher
         def quiz_handler(call):
             """ Send next step or result """
-
-            # Parse callback_data
-            from_stage_id = int(call.data.split(":")[1])
-            to_stage_id = int(call.data.split(":")[2])
-
-            # Initialize quiz interface.
-            lang_label = self.user.language.label
-            quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
-
-            # Remove question with answers
-            self.bot.delete_message(call.message.chat.id, call.message.message_id)
-
-            # Reply question and user answer in pretty format.
-            if to_stage_id != 0:
-                keyboard_buttons = call.message.reply_markup.keyboard
-                keyboard_button = list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
-                self.bot.send_message(
-                    call.message.chat.id,
-                    "⁉️" + call.message.text + "\n\n" + "✅" + keyboard_button[0].text
-                )
-                stage = quiz.get_next_stage(from_stage_id, to_stage_id)
-            else:
-                self.bot.delete_message(call.message.chat.id, call.message.message_id - 1)
-                self.bot.delete_message(call.message.chat.id, call.message.message_id - 2)
-                stage = quiz.get_previous_stage()
-
-            # Get info messages, which must be after question.
-            messages = list(stage.messages)
-            messages.sort(key=lambda x: x["index"])
-
-            info_text = "🔰️. "
             try:
+                # Parse callback_data
+                from_stage_id = int(call.data.split(":")[1])
+                to_stage_id = int(call.data.split(":")[2])
+
+                # Initialize quiz interface.
+                lang_label = self.user.language.label
+                quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
+
+                # Remove question with answers
+                self.bot.delete_message(call.message.chat.id, call.message.message_id)
+
+                # Reply question and user answer in pretty format.
+                if to_stage_id != 0:
+                    keyboard_buttons = call.message.reply_markup.keyboard
+                    keyboard_button = \
+                    list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
+                    self.bot.send_message(
+                        call.message.chat.id,
+                        "⁉️" + call.message.text + "\n\n" + "✅" + keyboard_button[0].text
+                    )
+                    stage = quiz.get_next_stage(from_stage_id, to_stage_id)
+                else:
+                    self.bot.delete_message(call.message.chat.id, call.message.message_id - 1)
+                    self.bot.delete_message(call.message.chat.id, call.message.message_id - 2)
+                    stage = quiz.get_previous_stage()
+
+                # Get info messages, which must be after question.
+                messages = list(stage.messages)
+                messages.sort(key=lambda x: x["index"])
+
+                info_text = "🔰️. "
+
                 if len(stage.children) != 0:
                     for message in messages:
                         info_text += message["text"] + "\n\n"
@@ -224,7 +225,8 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
                     markup = telebot.types.InlineKeyboardMarkup()
                     for child in stage.children:
-                        markup.row(telebot.types.InlineKeyboardButton(child["button"], callback_data=f"stage:{stage.id}:{child['id']}"))
+                        markup.row(telebot.types.InlineKeyboardButton(child["button"],
+                                                                      callback_data=f"stage:{stage.id}:{child['id']}"))
                     if len(stage.children) != 0:
                         markup.row(
                             telebot.types.InlineKeyboardButton("🔙 Back", callback_data=f"stage:{stage.id}:0")
@@ -236,6 +238,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     for message in messages:
                         info_text += message["text"] + "\n\n"
                     self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
+
             except Exception as e:
                 self.bot.send_message(call.message.chat.id, str(e))
 
