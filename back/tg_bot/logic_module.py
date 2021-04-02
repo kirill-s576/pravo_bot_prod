@@ -259,15 +259,16 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 info_text = "📖 -  "
 
                 if len(stage.children) != 0:
-                    for message in messages:
-                        info_text += message["text"] + "\n\n"
 
                     # Send info message.
-                    sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
-                    try:
-                        messages_memory[str(stage.id)].append(sended_message.message_id)
-                    except:
-                        messages_memory[str(stage.id)] = [sended_message.message_id]
+                    if len(messages) > 0:
+                        for message in messages:
+                            info_text += message["text"] + "\n\n"
+                        sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
+                        try:
+                            messages_memory[str(stage.id)].append(sended_message.message_id)
+                        except:
+                            messages_memory[str(stage.id)] = [sended_message.message_id]
 
                     # Send question with keyboard
                     markup = telebot.types.InlineKeyboardMarkup()
