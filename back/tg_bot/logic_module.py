@@ -184,8 +184,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
         @bot.callback_query_handler(func=lambda call: "stage:" in call.data)
         @end_of_logic_catcher
         def quiz_handler(call):
-            """ Send next step or result for message """
-            self.__middleware(call.message)
+            """ Send next step or result """
 
             # Parse callback_data
             from_stage_id = int(call.data.split(":")[1])
@@ -217,7 +216,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             messages.sort(key=lambda x: x["index"])
 
             info_text = "🔰️. "
-            if len(stage.children) != 0:
+            if stage.children:
                 for message in messages:
                     info_text += message["text"] + "\n\n"
             self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
@@ -232,9 +231,11 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
             self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
 
-            if len(stage.children) == 0:
+            info_text = "🔰️. "
+            if not stage.children:
                 for message in messages:
-                    self.bot.send_message(call.message.chat.id, message["text"], parse_mode="html")
+                    info_text += message["text"] + "\n\n"
+            self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
 
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
