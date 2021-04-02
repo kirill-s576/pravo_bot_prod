@@ -264,10 +264,6 @@ class DjangoRegisterBotLogicModule(LogicModule):
                         )
 
                     sended_message = self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
-                    try:
-                        messages_memory[str(stage.id)].append(sended_message.message_id)
-                    except:
-                        messages_memory[str(stage.id)] = [sended_message.message_id]
 
                 else:
                     for message in messages:
