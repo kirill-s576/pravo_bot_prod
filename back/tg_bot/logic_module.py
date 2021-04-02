@@ -115,6 +115,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
     def send_about(self, chat_id):
         self.bot.send_message(chat_id, self.get_translated_message("about"))
 
+    def send_important(self, chat_id):
+        self.bot.send_message(chat_id, self.get_translated_message("important"))
+
     @property
     def languages(self):
         """
@@ -157,6 +160,13 @@ class DjangoRegisterBotLogicModule(LogicModule):
             """ /about command handler """
             self.__middleware(message)
             self.send_about(message.chat.id)
+
+        @bot.message_handler(commands=["important"])
+        @end_of_logic_catcher
+        def important(message):
+            """ /about command handler """
+            self.__middleware(message)
+            self.send_important(message.chat.id)
 
         @bot.message_handler(commands=["quiz"])
         @end_of_logic_catcher
@@ -307,6 +317,8 @@ class DjangoRegisterBotLogicModule(LogicModule):
                         quiz_restart(message)
                     elif label == "about_button":
                         about(message)
+                    elif label == "important":
+                        important(message)
                     elif label == "change_language_button":
                         self.ask_language(message.chat.id)
                 else:

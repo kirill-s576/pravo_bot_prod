@@ -10,15 +10,19 @@ django.setup()
 #####
 
 
-from tg_bot.models import BotUser, Message, Language
-from quiz.interface import SimpleInterface, SessionInterface
-from tg_bot.logic_module import LogicModule, DjangoRegisterBotLogicModule
-from tg_bot.interface import Bot
+from quiz.models import Message, QButton
+import openpyxl
 
+msgs = QButton.objects.all()
 
-def main():
-    pass
+wb = openpyxl.Workbook()
+ws = wb.active
 
+ws.cell(1, 1).value = "Id"
+ws.cell(1, 2).value = "Text"
 
-if __name__ == '__main__':
-    main()
+for number, msg in enumerate(msgs):
+    ws.cell(number + 2, 1).value = msg.id
+    ws.cell(number + 2, 2).value = msg.default_text
+
+wb.save("buttons_dump.xlsx")
