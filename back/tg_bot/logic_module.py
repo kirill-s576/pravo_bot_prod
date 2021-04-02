@@ -285,7 +285,8 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 else:
                     for message in messages:
                         info_text += message["text"] + "\n\n"
-
+                    if stage.question:
+                        info_text += stage.question + "\n\n"
                     sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
                     try:
                         messages_memory[str(stage.id)].append(sended_message.message_id)
