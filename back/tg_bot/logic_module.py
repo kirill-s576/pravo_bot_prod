@@ -276,7 +276,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                             telebot.types.InlineKeyboardButton("🔙 Back",
                                                                callback_data=f"stage:{stage.id}:0")
                         )
-                    self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
+                    self.bot.send_message(call.message.chat.id, "⚠️" + stage.question, reply_markup=markup, parse_mode="html")
 
                 else:
                     for message in messages:
