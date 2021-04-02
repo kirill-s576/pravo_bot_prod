@@ -210,7 +210,6 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     stage = quiz.get_next_stage(from_stage_id, to_stage_id)
                 else:
                     self.bot.delete_message(call.message.chat.id, call.message.message_id - 1)
-                    self.bot.delete_message(call.message.chat.id, call.message.message_id - 2)
                     stage = quiz.get_previous_stage()
 
                 # Get info messages, which must be after question.
