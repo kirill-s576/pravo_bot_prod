@@ -235,12 +235,12 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     stage, removed_stage_id = quiz.get_previous_stage()
 
                     # Remove messages for removed_stage.
-                    # for_remove_messages = messages_memory.get(str(removed_stage_id), [])
-                    # for message_id in for_remove_messages:
-                    #     try:
-                    #         self.bot.delete_message(call.message.chat.id, message_id)
-                    #     except:
-                    #         pass
+                    for_remove_messages = messages_memory.get(str(removed_stage_id), [])
+                    for message_id in for_remove_messages:
+                        try:
+                            self.bot.delete_message(call.message.chat.id, message_id)
+                        except:
+                            pass
                     for_remove_messages = messages_memory.get(str(stage.id), [])
                     for message_id in for_remove_messages:
                         try:
