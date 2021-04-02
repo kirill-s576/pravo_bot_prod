@@ -204,11 +204,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 keyboard_button = list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
                 self.bot.send_message(
                     call.message.chat.id,
-                    "⁉️" + call.message.text
-                )
-                self.bot.send_message(
-                    call.message.chat.id,
-                    "✅" + keyboard_button[0].text
+                    "⁉️" + call.message.text + "\n\n" + "✅" + keyboard_button[0].text
                 )
                 stage = quiz.get_next_stage(from_stage_id, to_stage_id)
             else:
@@ -220,7 +216,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             messages = list(stage.messages)
             messages.sort(key=lambda x: x["index"])
 
-            info_text = "🔰️ > "
+            info_text = "🔰️ "
             if len(stage.children) != 0:
                 for message in messages:
                     info_text += message["text"] + "\n\n"
