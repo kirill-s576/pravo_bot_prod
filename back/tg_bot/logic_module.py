@@ -142,15 +142,6 @@ class DjangoRegisterBotLogicModule(LogicModule):
         """
         bot = self.bot
 
-        @bot.message_handler(commands=["start"])
-        @end_of_logic_catcher
-        def start(message):
-            """ /start command handler """
-            self.__middleware(message)
-            if not self.languages:
-                bot.send_message(message.chat.id, "Technical problems")
-            self.send_greeting(message.chat.id)
-            quiz_restart(message)
 
         @bot.message_handler(commands=["menu"])
         @end_of_logic_catcher
@@ -197,6 +188,16 @@ class DjangoRegisterBotLogicModule(LogicModule):
             messages_memory[str(stage.id)] = [sended_message.message_id]
             self.user.messages_memory = messages_memory
             self.user.save()
+
+        @bot.message_handler(commands=["start"])
+        @end_of_logic_catcher
+        def start(message):
+            """ /start command handler """
+            self.__middleware(message)
+            if not self.languages:
+                bot.send_message(message.chat.id, "Technical problems")
+            self.send_greeting(message.chat.id)
+            quiz_restart(message)
 
         @bot.callback_query_handler(func=lambda call: "lang:" in call.data)
         @end_of_logic_catcher
