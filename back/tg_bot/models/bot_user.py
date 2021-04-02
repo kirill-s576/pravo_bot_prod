@@ -16,9 +16,9 @@ class BotUser(models.Model):
         return self.user_name
 
     @property
-    def memory(self):
+    def messages_memory(self):
         return json.loads(self._memory)
 
-    @memory.setter
-    def memory(self, value):
+    @messages_memory.setter
+    def messages_memory(self, value):
         self._memory = json.dumps(value)
