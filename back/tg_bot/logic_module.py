@@ -236,7 +236,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                             self.bot.delete_message(call.message.chat.id, message_id)
                         except:
                             pass
-                    del messages_memory[removed_stage_id]
+                    del messages_memory[str(removed_stage_id)]
 
                 # Get info messages, which must be after question.
                 messages = list(stage.messages)
