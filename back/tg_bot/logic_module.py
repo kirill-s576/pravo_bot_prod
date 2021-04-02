@@ -195,10 +195,13 @@ class DjangoRegisterBotLogicModule(LogicModule):
         def start(message):
             """ /start command handler """
             self.__middleware(message)
-            if not self.languages:
-                bot.send_message(message.chat.id, "Technical problems")
             self.send_greeting(message.chat.id)
-            quiz_restart(message)
+            try:
+                quiz_restart(message)
+            except Exception as e:
+                bot.send_message(message.chat.id, str(e))
+                bot.send_message(message.chat.id, traceback.format_exc())
+
 
         @bot.callback_query_handler(func=lambda call: "lang:" in call.data)
         @end_of_logic_catcher
