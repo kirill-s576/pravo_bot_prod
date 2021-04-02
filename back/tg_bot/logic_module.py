@@ -216,12 +216,10 @@ class DjangoRegisterBotLogicModule(LogicModule):
             messages = list(stage.messages)
             messages.sort(key=lambda x: x["index"])
 
-            info_text = "🔰️ "
+            info_text = "🔰️. "
             if len(stage.children) != 0:
                 for message in messages:
                     info_text += message["text"] + "\n\n"
-            else:
-                info_text += " > ... "
             self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
 
             markup = telebot.types.InlineKeyboardMarkup()
