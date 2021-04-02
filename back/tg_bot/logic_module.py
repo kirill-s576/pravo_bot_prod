@@ -110,7 +110,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             telebot.types.KeyboardButton(self.get_translated_message("about_button")),
             telebot.types.KeyboardButton(self.get_translated_message("change_language_button"))
         )
-        self.bot.send_message(chat_id, "Menu", reply_markup=markup)
+        self.bot.send_message(chat_id, self.get_translated_message("menu_message"), reply_markup=markup)
 
     def send_about(self, chat_id):
         self.bot.send_message(chat_id, self.get_translated_message("about"))
