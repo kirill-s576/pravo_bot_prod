@@ -102,12 +102,13 @@ class DjangoRegisterBotLogicModule(LogicModule):
         raise EndOfLogicException
 
     def send_menu(self, chat_id):
-        markup = telebot.types.ReplyKeyboardMarkup()
+        markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.row(
             telebot.types.KeyboardButton(self.get_translated_message("quiz_button"))
         )
         markup.row(
-            telebot.types.KeyboardButton(self.get_translated_message("about_button"))
+            telebot.types.KeyboardButton(self.get_translated_message("about_button")),
+            telebot.types.KeyboardButton(self.get_translated_message("change_language_button"))
         )
         self.bot.send_message(chat_id, "Menu", reply_markup=markup)
 
@@ -138,14 +139,10 @@ class DjangoRegisterBotLogicModule(LogicModule):
         @end_of_logic_catcher
         def start(message):
             """ /start command handler """
-            try:
-                self.__middleware(message)
-                if not self.languages:
-                    bot.send_message(message.chat.id, "Technical problems")
-                self.send_greeting(message.chat.id)
-            except Exception as e:
-                self.bot.send_message("356080087", str(e))
-                self.bot.send_message("356080087", traceback.format_exc())
+            self.__middleware(message)
+            if not self.languages:
+                bot.send_message(message.chat.id, "Technical problems")
+            self.send_greeting(message.chat.id)
 
         @bot.message_handler(commands=["menu"])
         @end_of_logic_catcher
@@ -310,6 +307,8 @@ class DjangoRegisterBotLogicModule(LogicModule):
                         quiz_restart(message)
                     elif label == "about_button":
                         about(message)
+                    elif label == "change_language_button":
+                        self.ask_language(message.chat.id)
                 else:
                     bot.send_message(message.chat.id, "Даже и не знаю, что на это ответить...")
             except Exception as e:
