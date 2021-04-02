@@ -97,11 +97,11 @@ class DjangoRegisterBotLogicModule(LogicModule):
     def send_greeting(self, chat_id):
         greeting_text = self.get_translated_message("greeting")
         if greeting_text:
-            self.bot.send_message(chat_id, greeting_text)
             self.send_menu(chat_id)
         raise EndOfLogicException
 
     def send_menu(self, chat_id):
+
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.row(
             telebot.types.KeyboardButton(self.get_translated_message("quiz_button"))
