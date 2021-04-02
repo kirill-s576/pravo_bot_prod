@@ -1,4 +1,5 @@
 from django.db import models
+import json
 
 
 class BotUser(models.Model):
@@ -9,6 +10,15 @@ class BotUser(models.Model):
     user_name = models.CharField(max_length=255)
     language = models.ForeignKey("tg_bot.Language", on_delete=models.SET_NULL, null=True, blank=True)
     memory_message_id = models.CharField(max_length=255)
+    _memory = models.TextField(default="{}")
 
     def __str__(self):
         return self.user_name
+
+    @property
+    def memory(self):
+        return json.loads(self._memory)
+
+    @memory.setter
+    def memory(self, value):
+        self._memory = json.dumps(value)

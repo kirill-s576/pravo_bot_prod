@@ -141,11 +141,11 @@ class SessionInterface(SimpleInterface):
         return next_stage_response
 
     def get_previous_stage(self):
-        self.session.pop_step()
+        removed_stage_id = self.session.pop_step()
         prev_stage_id = self.session.steps[-1]
         previous_stage = Stage.objects.get(id=prev_stage_id)
         serializer = StageResponseSerializer(previous_stage, self.language_model)
-        return serializer
+        return serializer, removed_stage_id
 
     def get_report(self) -> List[StageResponseSerializer]:
         stages = Stage.objects.filter(id__in=self.session.steps)
