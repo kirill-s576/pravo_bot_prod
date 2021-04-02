@@ -5,9 +5,9 @@ import json
 class BotUser(models.Model):
 
     chat_id = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    user_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    user_name = models.CharField(max_length=255, null=True, blank=True)
     language = models.ForeignKey("tg_bot.Language", on_delete=models.SET_NULL, null=True, blank=True)
     memory_message_id = models.CharField(max_length=255)
     _memory = models.TextField(default="{}")
