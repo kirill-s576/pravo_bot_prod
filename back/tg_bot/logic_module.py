@@ -107,7 +107,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             telebot.types.KeyboardButton(self.get_translated_message("quiz_button"))
         )
         markup.row(
-            telebot.types.KeyboardButton(self.get_translated_message("important"))
+            telebot.types.KeyboardButton(self.get_translated_message("important_button"))
         )
         markup.row(
             telebot.types.KeyboardButton(self.get_translated_message("about_button")),
@@ -320,7 +320,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                         quiz_restart(message)
                     elif label == "about_button":
                         about(message)
-                    elif label == "important":
+                    elif label == "important_button":
                         important(message)
                     elif label == "change_language_button":
                         self.ask_language(message.chat.id)
