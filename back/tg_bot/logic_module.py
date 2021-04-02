@@ -205,6 +205,8 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 # Initialize quiz interface.
                 lang_label = self.user.language.label
                 quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
+
+                # Get user memory slot.
                 messages_memory = self.user.messages_memory
 
                 # Remove question with answers
@@ -230,8 +232,12 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     # Remove messages for removed_stage.
                     for_remove_messages = messages_memory.get(removed_stage_id, [])
                     for message_id in for_remove_messages:
-                        self.bot.delete_message(call.message.chat.id, message_id)
+                        try:
+                            self.bot.delete_message(call.message.chat.id, message_id)
+                        except:
+                            pass
                     messages_memory[removed_stage_id] = []
+
                 # Get info messages, which must be after question.
                 messages = list(stage.messages)
                 messages.sort(key=lambda x: x["index"])
@@ -257,8 +263,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                             telebot.types.InlineKeyboardButton("🔙 Back", callback_data=f"stage:{stage.id}:0")
                         )
 
-                    self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
-
+                    sended_message = self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
                     try:
                         messages_memory[stage.id].append(sended_message.message_id)
                     except:
@@ -267,8 +272,8 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 else:
                     for message in messages:
                         info_text += message["text"] + "\n\n"
-                    sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
 
+                    sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
                     try:
                         messages_memory[stage.id].append(sended_message.message_id)
                     except:
