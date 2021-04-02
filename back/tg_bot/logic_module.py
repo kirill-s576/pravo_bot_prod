@@ -105,15 +105,16 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.row(
-            telebot.types.KeyboardButton(self.get_translated_message("quiz_button"))
+            telebot.types.KeyboardButton(self.get_translated_message("change_language_button")),
+            telebot.types.KeyboardButton(self.get_translated_message("about_button"))
         )
         markup.row(
             telebot.types.KeyboardButton(self.get_translated_message("important_button"))
         )
         markup.row(
-            telebot.types.KeyboardButton(self.get_translated_message("change_language_button")),
-            telebot.types.KeyboardButton(self.get_translated_message("about_button"))
+            telebot.types.KeyboardButton(self.get_translated_message("quiz_button"))
         )
+
         self.bot.send_message(chat_id, self.get_translated_message("menu_message"), reply_markup=markup)
 
     def send_about(self, chat_id):
