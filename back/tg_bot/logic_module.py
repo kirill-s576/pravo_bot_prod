@@ -178,7 +178,10 @@ class DjangoRegisterBotLogicModule(LogicModule):
             for child in stage.children:
                 markup.row(telebot.types.InlineKeyboardButton(child["button"],
                                                               callback_data=f"stage:{stage.id}:{child['id']}"))
-            bot.delete_message(message.chat.id, self.user.memory_message_id)
+            try:
+                bot.delete_message(message.chat.id, self.user.memory_message_id)
+            except:
+                pass
             sended_message = self.bot.send_message(
                 message.chat.id,
                 stage.question,
