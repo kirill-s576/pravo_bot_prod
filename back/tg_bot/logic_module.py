@@ -177,7 +177,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 reply_markup=markup,
                 parse_mode="html"
             )
-            self.user_model.messages_memory[stage.id] = [sended_message.message_id]
+            messages_memory = {}
+            messages_memory[stage.id] = [sended_message.message_id]
+            self.user_model.messages_memory = messages_memory
             self.user_model.save()
 
 
