@@ -185,6 +185,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
         @end_of_logic_catcher
         def quiz_handler(call):
             """ Send next step or result """
+            self.__middleware(call.message)
             try:
                 # Parse callback_data
                 from_stage_id = int(call.data.split(":")[1])
