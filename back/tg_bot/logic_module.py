@@ -210,105 +210,100 @@ class DjangoRegisterBotLogicModule(LogicModule):
         def quiz_handler(call):
             """ Send next step or result """
             self.__middleware(call.message)
-            try:
 
-                # Remove question with answers
-                self.bot.delete_message(call.message.chat.id, call.message.message_id)
+            # Remove question with answers
+            self.bot.delete_message(call.message.chat.id, call.message.message_id)
 
-                # Parse callback_data
-                from_stage_id = int(call.data.split(":")[1])
-                to_stage_id = int(call.data.split(":")[2])
+            # Parse callback_data
+            from_stage_id = int(call.data.split(":")[1])
+            to_stage_id = int(call.data.split(":")[2])
 
-                # Initialize quiz interface.
-                lang_label = self.user.language.label
-                quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
+            # Initialize quiz interface.
+            lang_label = self.user.language.label
+            quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
 
-                # Get user memory slot.
-                messages_memory = self.user.messages_memory
+            # Get user memory slot.
+            messages_memory = self.user.messages_memory
 
-                if to_stage_id != 0:
+            if to_stage_id != 0:
 
-                    # Get next stage for view
-                    stage = quiz.get_next_stage(from_stage_id, to_stage_id)
+                # Get next stage for view
+                stage = quiz.get_next_stage(from_stage_id, to_stage_id)
 
-                    # Reply question and user answer in pretty format.
-                    keyboard_buttons = call.message.reply_markup.keyboard
-                    keyboard_button = list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
-                    sended_message = self.bot.send_message(
-                        call.message.chat.id,
-                        "⁉️" + call.message.text + "\n\n" + "✅" + keyboard_button[0].text
-                    )
+                # Reply question and user answer in pretty format.
+                keyboard_buttons = call.message.reply_markup.keyboard
+                keyboard_button = list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
+                sended_message = self.bot.send_message(
+                    call.message.chat.id,
+                    "⁉️" + call.message.text + "\n\n" + "✅" + keyboard_button[0].text
+                )
+                try:
+                    messages_memory[str(from_stage_id)].append(sended_message.message_id)
+                except:
+                    messages_memory[str(from_stage_id)] = [sended_message.message_id]
+            else:
+
+                # Get previous stage for view
+                stage, removed_stage_id = quiz.get_previous_stage()
+
+                # Remove messages for removed_stage.
+                for_remove_messages = messages_memory.get(str(removed_stage_id), [])
+                for message_id in for_remove_messages:
                     try:
-                        messages_memory[str(from_stage_id)].append(sended_message.message_id)
+                        self.bot.delete_message(call.message.chat.id, message_id)
                     except:
-                        messages_memory[str(from_stage_id)] = [sended_message.message_id]
-                else:
+                        pass
+                for_remove_messages = messages_memory.get(str(stage.id), [])
+                for message_id in for_remove_messages:
+                    try:
+                        self.bot.delete_message(call.message.chat.id, message_id)
+                    except:
+                        pass
+                del messages_memory[str(stage.id)]
 
-                    # Get previous stage for view
-                    stage, removed_stage_id = quiz.get_previous_stage()
+            # Get info messages, which must be after question.
+            messages = list(stage.messages)
+            messages.sort(key=lambda x: x["index"])
 
-                    # Remove messages for removed_stage.
-                    for_remove_messages = messages_memory.get(str(removed_stage_id), [])
-                    for message_id in for_remove_messages:
-                        try:
-                            self.bot.delete_message(call.message.chat.id, message_id)
-                        except:
-                            pass
-                    for_remove_messages = messages_memory.get(str(stage.id), [])
-                    for message_id in for_remove_messages:
-                        try:
-                            self.bot.delete_message(call.message.chat.id, message_id)
-                        except:
-                            pass
-                    del messages_memory[str(stage.id)]
+            info_text = "📖 -  "
 
-                # Get info messages, which must be after question.
-                messages = list(stage.messages)
-                messages.sort(key=lambda x: x["index"])
+            if len(stage.children) != 0:
 
-                info_text = "📖 -  "
-
-                if len(stage.children) != 0:
-
-                    # Send info message.
-                    if len(messages) > 0:
-                        for message in messages:
-                            info_text += message["text"] + "\n\n"
-                        sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
-                        try:
-                            messages_memory[str(stage.id)].append(sended_message.message_id)
-                        except:
-                            messages_memory[str(stage.id)] = [sended_message.message_id]
-
-                    # Send question with keyboard
-                    markup = telebot.types.InlineKeyboardMarkup()
-                    for child in stage.children:
-                        markup.row(telebot.types.InlineKeyboardButton(child["button"],
-                                                                      callback_data=f"stage:{stage.id}:{child['id']}"))
-                    if len(stage.children) != 0 and stage.id != 30001:
-                        markup.row(
-                            telebot.types.InlineKeyboardButton("🔙 Back",
-                                                               callback_data=f"stage:{stage.id}:0")
-                        )
-                    self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
-
-                else:
+                # Send info message.
+                if len(messages) > 0:
                     for message in messages:
                         info_text += message["text"] + "\n\n"
-                    if stage.question:
-                        info_text += stage.question + "\n\n"
                     sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
                     try:
                         messages_memory[str(stage.id)].append(sended_message.message_id)
                     except:
                         messages_memory[str(stage.id)] = [sended_message.message_id]
 
-                self.user.messages_memory = messages_memory
-                self.user.save()
+                # Send question with keyboard
+                markup = telebot.types.InlineKeyboardMarkup()
+                for child in stage.children:
+                    markup.row(telebot.types.InlineKeyboardButton(child["button"],
+                                                                  callback_data=f"stage:{stage.id}:{child['id']}"))
+                if len(stage.children) != 0 and stage.id != 30001:
+                    markup.row(
+                        telebot.types.InlineKeyboardButton("🔙 Back",
+                                                           callback_data=f"stage:{stage.id}:0")
+                    )
+                self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
 
-            except Exception as e:
-                self.bot.send_message(call.message.chat.id, str(e))
-                bot.send_message(call.message.chat.id, traceback.format_exc())
+            else:
+                for message in messages:
+                    info_text += message["text"] + "\n\n"
+                if stage.question:
+                    info_text += stage.question + "\n\n"
+                sended_message = self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
+                try:
+                    messages_memory[str(stage.id)].append(sended_message.message_id)
+                except:
+                    messages_memory[str(stage.id)] = [sended_message.message_id]
+
+            self.user.messages_memory = messages_memory
+            self.user.save()
 
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
