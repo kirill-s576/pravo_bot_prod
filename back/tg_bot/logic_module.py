@@ -312,8 +312,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 else:
                     bot.send_message(message.chat.id, "Даже и не знаю, что на это ответить...")
             except Exception as e:
-                bot.send_message(message.chat.id, str(e))
-                bot.send_message(message.chat.id, traceback.format_exc())
+                bot.send_message(message.chat.id, "Даже и не знаю, что на это ответить...")
         return bot
 
 
