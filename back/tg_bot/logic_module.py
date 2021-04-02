@@ -107,6 +107,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
             telebot.types.KeyboardButton(self.get_translated_message("quiz_button"))
         )
         markup.row(
+            telebot.types.KeyboardButton(self.get_translated_message("important"))
+        )
+        markup.row(
             telebot.types.KeyboardButton(self.get_translated_message("about_button")),
             telebot.types.KeyboardButton(self.get_translated_message("change_language_button"))
         )
