@@ -191,12 +191,14 @@ class DjangoRegisterBotLogicModule(LogicModule):
             from_stage_id = int(call.data.split(":")[1])
             to_stage_id = int(call.data.split(":")[2])
 
+            # Initialize quiz interface.
             lang_label = self.user.language.label
             quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
 
-            # Remove message, Reply question and user answer
+            # Remove question with answers
             self.bot.delete_message(call.message.chat.id, call.message.message_id)
 
+            # Reply question and user answer in pretty format.
             if to_stage_id != 0:
                 keyboard_buttons = call.message.reply_markup.keyboard
                 keyboard_button = list(filter(lambda button: button[0].callback_data == call.data, keyboard_buttons))[0]
@@ -212,29 +214,32 @@ class DjangoRegisterBotLogicModule(LogicModule):
             else:
                 self.bot.delete_message(call.message.chat.id, call.message.message_id - 1)
                 self.bot.delete_message(call.message.chat.id, call.message.message_id - 2)
+                self.bot.delete_message(call.message.chat.id, call.message.message_id - 3)
                 stage = quiz.get_previous_stage()
 
+            # Get info messages, which must be after question.
             messages = list(stage.messages)
             messages.sort(key=lambda x: x["index"])
 
+            info_text = "🔰️ "
             if len(stage.children) != 0:
                 for message in messages:
-                    self.bot.send_message(call.message.chat.id, "✅" + message["text"], parse_mode="html")
+                    info_text += message.text + "\n\n"
+            self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
 
             markup = telebot.types.InlineKeyboardMarkup()
             for child in stage.children:
                 markup.row(telebot.types.InlineKeyboardButton(child["button"], callback_data=f"stage:{stage.id}:{child['id']}"))
             if len(stage.children) != 0:
                 markup.row(
-                    telebot.types.InlineKeyboardButton("<<<", callback_data=f"stage:{stage.id}:0")
+                    telebot.types.InlineKeyboardButton("🔙 Back", callback_data=f"stage:{stage.id}:0")
                 )
 
             self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
 
             if len(stage.children) == 0:
-
                 for message in messages:
-                    self.bot.send_message(call.message.chat.id, message["text"],parse_mode="html")
+                    self.bot.send_message(call.message.chat.id, message["text"], parse_mode="html")
 
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
