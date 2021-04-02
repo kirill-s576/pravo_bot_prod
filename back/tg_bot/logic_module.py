@@ -53,9 +53,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
         We should use it in each bot handler.
         """
         defaults = {
-            "user_name": getattr(message.chat, "username", ""),
-            "first_name": getattr(message.chat, "first_name", ""),
-            "last_name": getattr(message.chat, "last_name", "")
+            "user_name": getattr(message.chat, "username", "-"),
+            "first_name": getattr(message.chat, "first_name", "-"),
+            "last_name": getattr(message.chat, "last_name", "-")
         }
         user, created = self.user_model.objects.get_or_create(
             chat_id=message.chat.id,
