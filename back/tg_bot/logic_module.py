@@ -216,26 +216,25 @@ class DjangoRegisterBotLogicModule(LogicModule):
             messages.sort(key=lambda x: x["index"])
 
             info_text = "🔰️. "
-            if stage.children:
-                for message in messages:
-                    info_text += message["text"] + "\n\n"
-            self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
-
-            markup = telebot.types.InlineKeyboardMarkup()
-            for child in stage.children:
-                markup.row(telebot.types.InlineKeyboardButton(child["button"], callback_data=f"stage:{stage.id}:{child['id']}"))
             if len(stage.children) != 0:
-                markup.row(
-                    telebot.types.InlineKeyboardButton("🔙 Back", callback_data=f"stage:{stage.id}:0")
-                )
-
-            self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
-
-            info_text = "🔰️. "
-            if not stage.children:
                 for message in messages:
                     info_text += message["text"] + "\n\n"
-            self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
+                self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
+
+                markup = telebot.types.InlineKeyboardMarkup()
+                for child in stage.children:
+                    markup.row(telebot.types.InlineKeyboardButton(child["button"], callback_data=f"stage:{stage.id}:{child['id']}"))
+                if len(stage.children) != 0:
+                    markup.row(
+                        telebot.types.InlineKeyboardButton("🔙 Back", callback_data=f"stage:{stage.id}:0")
+                    )
+
+                self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
+
+            else:
+                for message in messages:
+                    info_text += message["text"] + "\n\n"
+                self.bot.send_message(call.message.chat.id, info_text, parse_mode="html")
 
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
