@@ -99,7 +99,6 @@ class DjangoRegisterBotLogicModule(LogicModule):
         if greeting_text:
             self.bot.send_message(chat_id, greeting_text)
             self.send_menu(chat_id)
-        raise EndOfLogicException
 
     def send_menu(self, chat_id):
 
@@ -196,12 +195,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             """ /start command handler """
             self.__middleware(message)
             self.send_greeting(message.chat.id)
-            try:
-                quiz_restart(message)
-            except Exception as e:
-                bot.send_message(message.chat.id, str(e))
-                bot.send_message(message.chat.id, traceback.format_exc())
-
+            quiz_restart(message)
 
         @bot.callback_query_handler(func=lambda call: "lang:" in call.data)
         @end_of_logic_catcher
