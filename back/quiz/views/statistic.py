@@ -25,11 +25,11 @@ class SessionViewSet(ViewSet):
     def get_statistic(self, request):
         serializer = StatisticRequestSerializer(data=request.data)
         if serializer.is_valid():
-            # stat_interface = PeriodSessionStatistic(
-            #     date_from=serializer.date_from,
-            #     date_to=serializer.date_to
-            # )
+            stat_interface = PeriodSessionStatistic(
+                date_from=serializer.validated_data["date_from"],
+                date_to=serializer.validated_data["date_to"]
+            )
             return Response(
-                serializer.data,
+                stat_interface.get_json(),
                 status=200
             )
