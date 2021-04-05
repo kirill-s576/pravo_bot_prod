@@ -19,10 +19,19 @@
           </v-btn>
         </v-toolbar>
         <v-card-title>
-          {{messageData.title}}
+          <v-text-field label="Title" v-model="messageData.title">
+
+          </v-text-field>
         </v-card-title>
         <v-card-text>
-          {{messageData.default_text}}
+          <v-textarea label="Text" v-model="messageData.default_text">
+
+          </v-textarea>
+        </v-card-text>
+        <v-card-text>
+          <v-btn @click="updateText(messageData.id, messageData.title, messageData.default_text)">
+            Save
+          </v-btn>
         </v-card-text>
         <v-card-text>
           <v-row>
@@ -132,6 +141,15 @@
         },
         getLanguageById ( languageId ) {
           return this.languagesData.filter(item => item.id === languageId)
+        },
+        updateText( id, title, text) {
+          this.$axios.put(
+            "/quiz/messages/" + id + "/",
+            {
+              title: title,
+              default_text: text
+            }
+          )
         }
       }
     }

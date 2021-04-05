@@ -8,14 +8,11 @@
             {{message.title}}
           </v-card-title>
           <v-card-text>
-            <v-textarea v-model="message.default_text">
+            <v-textarea v-model="message.default_text" readonly>
 
             </v-textarea>
           </v-card-text>
           <v-card-actions>
-            <v-btn>
-              Save
-            </v-btn>
             <v-btn @click="dialogMessageData = message; dialogDrawer=true;">
               Settings
             </v-btn>
@@ -66,6 +63,9 @@
         this.$store.dispatch("components/setLanguages")
         this.$store.dispatch("components/setTexts")
       },
+      methods: {
+
+      }
     }
 </script>
 

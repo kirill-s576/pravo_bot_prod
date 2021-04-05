@@ -61,10 +61,10 @@
     </v-row>
     <v-row>
       <v-col cols="6">
-        <VueApexCharts width="500" type="donut" :options="pieOptions" :series="byLanguageChartPercents"></VueApexCharts>
+        <apexcharts width="500" type="donut" :options="pieOptions" :series="byLanguageChartPercents"></apexcharts>
       </v-col>
       <v-col cols="6">
-        <VueApexCharts width="500" type="line" :series="lineChartSeries" :options="lineOptions"/>
+        <apexcharts width="500" type="line" :series="lineChartSeries" :options="lineOptions"/>
       </v-col>
     </v-row>
   </div>
@@ -73,9 +73,6 @@
 <script>
 
     export default {
-      components: {
-        VueApexCharts: () => import('vue-apexcharts')
-      },
       data () {
         return {
           dateFrom: new Date().toISOString().substr(0, 10),
