@@ -8,3 +8,28 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from ..models import Session
+from ..serializers import StatisticRequestSerializer
+from ..interface import PeriodSessionStatistic
+
+
+class SessionViewSet(ViewSet):
+
+    @swagger_auto_schema(
+        request_body=StatisticRequestSerializer,
+        responses={
+            200: openapi.Response('Statistic'),
+        },
+        tags=['Stages']
+    )
+    @action(methods=["POST"], detail=False)
+    def get_statistic(self, request):
+        serializer = StatisticRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            stat_interface = PeriodSessionStatistic(
+                serializer.date_from,
+                serializer.date_to
+            )
+            return Response(
+                stat_interface.get_json(),
+                status=200
+            )

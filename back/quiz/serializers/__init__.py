@@ -35,3 +35,7 @@ from .translates import (
     ButtonTranslateCreateSerializer,
     ButtonTranslateUpdateSerializer
 )
+
+from .statistic import (
+    StatisticRequestSerializer
+)

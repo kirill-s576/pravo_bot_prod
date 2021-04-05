@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pa-4">
     <v-row>
       <v-col cols="6">
         <v-menu
@@ -52,7 +52,10 @@
         </v-menu>
       </v-col>
     </v-row>
-
+    <v-row>
+      {{dateFrom}}
+      {{dateTo}}
+    </v-row>
   </div>
 </template>
 

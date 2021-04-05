@@ -3,3 +3,4 @@ from .message import MessageViewSet
 from .stage import StageViewSet
 from .languages import LanguageViewSet
 from .translates import MessageTranslationViewSet, QButtonTranslationViewSet
+from .statistic import SessionViewSet
