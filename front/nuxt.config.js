@@ -27,6 +27,7 @@ export default {
     { src: '~plugins/vueTreeChart.js', ssr: false },
     { src: '~plugins/axios.js', ssr: false },
     '~plugins/local-storage.js',
+    { src: '~plugins/apexcharts.js', ssr: false },
   ],
 
   components: true,
