@@ -51,10 +51,10 @@
           ></v-date-picker>
         </v-menu>
       </v-col>
+      <v-btn @click="refreshStat">Refresh</v-btn>
     </v-row>
     <v-row>
-      {{dateFrom}}
-      {{dateTo}}
+      {{statData}}
     </v-row>
   </div>
 </template>
@@ -66,7 +66,24 @@
           dateFrom: new Date().toISOString().substr(0, 10),
           dateTo: new Date().toISOString().substr(0, 10),
           menuFrom: false,
-          menuTo: false
+          menuTo: false,
+          statData: null
+        }
+      },
+      methods: {
+        refreshStat () {
+          this.$axios.post(
+            '/quiz/sessions/get_statistic/',
+            {
+              date_from: this.dateFrom,
+              date_to: this.dateTo
+            }
+          )
+          .then(
+            response => {
+              this.statData = response.data
+            }
+          )
         }
       }
     }

@@ -19,17 +19,17 @@ class SessionViewSet(ViewSet):
         responses={
             200: openapi.Response('Statistic'),
         },
-        tags=['Stages']
+        tags=['Sessions']
     )
     @action(methods=["POST"], detail=False)
     def get_statistic(self, request):
         serializer = StatisticRequestSerializer(data=request.data)
         if serializer.is_valid():
-            stat_interface = PeriodSessionStatistic(
-                serializer.date_from,
-                serializer.date_to
-            )
+            # stat_interface = PeriodSessionStatistic(
+            #     date_from=serializer.date_from,
+            #     date_to=serializer.date_to
+            # )
             return Response(
-                stat_interface.get_json(),
+                serializer.data,
                 status=200
             )
