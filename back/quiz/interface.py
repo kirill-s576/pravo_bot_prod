@@ -3,7 +3,8 @@ from django.db.models.query import QuerySet
 from .models import Session, Language, Stage
 from typing import List
 import datetime
-
+from django.db.models import Count
+from django.db.models.functions import TruncDate
 
 SESSION_LIFETIME = 1000
 
@@ -206,11 +207,23 @@ class SessionStatistic:
         ]
         return languages_final_list
 
+    @property
+    def sessions_per_day(self):
+        stat = self.session_queryset \
+            .annotate(date=TruncDate('created_at')) \
+            .values('date') \
+            .annotate(total=Count('id')) \
+            .values('date', 'total')
+        for el in stat:
+            el["date"] = el["date"].isoformat()
+        return list(stat)
+
     def get_json(self):
         return {
             "total_sessions_count": self.total_sessions_count,
             "finished_sessions_count": self.finished_sessions_count,
-            "sessions_count_by_language": self.sessions_count_by_language
+            "sessions_count_by_language": self.sessions_count_by_language,
+            "sessions_per_day": self.sessions_per_day
         }
 
 
