@@ -18,6 +18,7 @@
         <v-tabs>
           <v-tab to="/components">Компоненты</v-tab>
           <v-tab to="/constructor">Конструктор</v-tab>
+          <v-tab to="/stat">Статистика</v-tab>
           <v-tab to="/bot">Бот</v-tab>
         </v-tabs>
         <div v-if="userData">{{userData.email}}</div>

@@ -3,26 +3,19 @@ import os
 import django
 from dotenv import load_dotenv
 from pathlib import Path
-env_path = Path('/Users/kirill/own-projects/freelance/pravo_bot/environments.env')
+env_path = Path('/Users/kirill/own_projects/pravo_bot/environments.env')
 load_dotenv(dotenv_path=env_path)
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 #####
 
 
-from quiz.models import Message, QButton
-import openpyxl
+from quiz.interface import PeriodSessionStatistic
+from django.utils import timezone
 
-msgs = QButton.objects.all()
 
-wb = openpyxl.Workbook()
-ws = wb.active
+now = timezone.now()
+delta = timezone.timedelta(days=5)
 
-ws.cell(1, 1).value = "Id"
-ws.cell(1, 2).value = "Text"
-
-for number, msg in enumerate(msgs):
-    ws.cell(number + 2, 1).value = msg.id
-    ws.cell(number + 2, 2).value = msg.default_text
-
-wb.save("buttons_dump.xlsx")
+stat = PeriodSessionStatistic(now-delta, now)
+print(stat.get_json())

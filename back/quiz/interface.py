@@ -158,6 +158,7 @@ class SessionInterface(SimpleInterface):
         self.session.finished = True
         self.session.save()
 
+
 class SessionStatistic:
 
     def __init__(self, sessions_queryset: QuerySet[Session]):
@@ -182,6 +183,7 @@ class SessionStatistic:
     @property
     def sessions_count_by_language(self) -> List[dict]:
         """
+        Is this function put on sessions count for each language
         Returns data in format
         [
             {
