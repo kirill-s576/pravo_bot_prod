@@ -5,12 +5,9 @@
       <v-col cols="4" v-for="button in buttonsFilter" :key="button.id">
         <v-card v-if="button">
           <v-card-title>
-            <v-text-field v-model="button.default_text"></v-text-field>
+            {{button.default_text}}
           </v-card-title>
           <v-card-actions>
-            <v-btn>
-              Save
-            </v-btn>
             <v-btn @click="dialogButtonData = button; dialogDrawer=true;">
               Settings
             </v-btn>
@@ -69,6 +66,9 @@
         this.$store.dispatch("components/setLanguages")
         this.$store.dispatch("components/setButtons")
       },
+      methods: {
+
+      }
     }
 </script>
 

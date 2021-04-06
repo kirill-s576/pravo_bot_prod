@@ -297,6 +297,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 sended_question = self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
                 self.user.memory_message_id = sended_question.message_id
             else:
+                # Finish
                 for message in messages:
                     info_text += message["text"] + "\n\n"
                 if stage.question:
@@ -306,7 +307,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     messages_memory[str(stage.id)].append(sended_message.message_id)
                 except:
                     messages_memory[str(stage.id)] = [sended_message.message_id]
-
+                self.quiz_interface.finish_session()
             self.user.messages_memory = messages_memory
             self.user.save()
 

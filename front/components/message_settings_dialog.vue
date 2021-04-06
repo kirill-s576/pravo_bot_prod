@@ -71,10 +71,10 @@
                   </v-textarea>
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn>
+                  <v-btn @click="updateMessageTranslate(translate.id, translate.text)">
                     Save
                   </v-btn>
-                  <v-btn>
+                  <v-btn @click="removeMessageTranslate(translate.id)">
                     Remove
                   </v-btn>
                 </v-card-actions>
@@ -126,6 +126,18 @@
               this.translates = response.data
             })
         },
+        getLanguageById ( languageId ) {
+          return this.languagesData.filter(item => item.id === languageId)
+        },
+        updateText( id, title, text) {
+          this.$axios.put(
+            "/quiz/messages/" + id + "/",
+            {
+              title: title,
+              default_text: text
+            }
+          )
+        },
         crateTranslate () {
           this.$axios.post(
             '/quiz/translates/message/',
@@ -139,15 +151,21 @@
               this.translates.push(response.data)
             })
         },
-        getLanguageById ( languageId ) {
-          return this.languagesData.filter(item => item.id === languageId)
-        },
-        updateText( id, title, text) {
+        updateMessageTranslate (translateId, newText) {
           this.$axios.put(
-            "/quiz/messages/" + id + "/",
+            '/quiz/translates/message/' + translateId + "/",
             {
-              title: title,
-              default_text: text
+              text: newText
+            }
+          )
+        },
+        removeMessageTranslate( id ) {
+          this.$axios.delete(
+            '/quiz/translates/message/' + id + '/'
+          )
+          .then(
+            response => {
+              this.translates = this.translates.filter(item => item.id !== id)
             }
           )
         }

@@ -19,6 +19,7 @@ from ..serializers import (
     ButtonTranslateUpdateSerializer
 )
 
+
 class MessageTranslationViewSet(ViewSet):
 
     permission_classes = [AllowAny]

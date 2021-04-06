@@ -138,7 +138,7 @@
           ]
         }
       },
-      mounted() {
+      created () {
         this.$store.dispatch("components/setLanguages")
       },
       methods: {

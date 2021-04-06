@@ -19,8 +19,11 @@
           </v-btn>
         </v-toolbar>
         <v-card-title>
-          {{buttonData.default_text}}
+          <v-text-field label="Default text button" v-model="buttonData.default_text"></v-text-field>
         </v-card-title>
+        <v-card-text>
+          <v-btn @click="updateButtonText(buttonData.id, buttonData.default_text)">Save</v-btn>
+        </v-card-text>
         <v-card-text>
           <v-row>
             <v-col cols="4" v-if="emptyLanguageChoices.length > 0">
@@ -58,10 +61,10 @@
                   <v-text-field v-model="translate.text"></v-text-field>
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn>
+                  <v-btn @click="updateButtonTranslate(translate.id, translate.text)">
                     Save
                   </v-btn>
-                  <v-btn>
+                  <v-btn @click="removeButtonTranslate( translate.id )">
                     Remove
                   </v-btn>
                 </v-card-actions>
@@ -128,6 +131,32 @@
         },
         getLanguageById ( languageId ) {
           return this.languagesData.filter(item => item.id === languageId)
+        },
+        updateButtonText( id, text) {
+          this.$axios.put(
+            "/quiz/buttons/" + id + "/",
+            {
+              default_text: text
+            }
+          )
+        },
+        updateButtonTranslate (translateId, newText) {
+          this.$axios.put(
+            '/quiz/translates/button/' + translateId + "/",
+            {
+              text: newText
+            }
+          )
+        },
+        removeButtonTranslate( id ) {
+          this.$axios.delete(
+            '/quiz/translates/button/' + id + '/'
+          )
+          .then(
+            response => {
+              this.translates = this.translates.filter(item => item.id !== id)
+            }
+          )
         }
       }
     }

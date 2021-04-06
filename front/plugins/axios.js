@@ -7,10 +7,10 @@ export default function ({ $axios, app, store}) {
     })
     $axios.onError(error => {
         if(error.response.status === 403) {
-
+          store.commit("LOGOUT")
         }
         if(error.response.status === 401) {
-
+          store.commit("LOGOUT")
         }
     });
 }

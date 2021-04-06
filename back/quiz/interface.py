@@ -233,3 +233,29 @@ class PeriodSessionStatistic(SessionStatistic):
         queryset = Session.objects.filter(created_at__gte=date_from, created_at__lte=date_to)
         super().__init__(queryset)
 
+
+class SessionUserInterface:
+
+    def __init__(self, user_id, session_id):
+        self.user_id = user_id
+        self.session_id = session_id
+
+    @property
+    def __user_sessions_queryset(self):
+        return Session.objects.filter(user_id=self.user_id)
+
+    def __get_session_model(self):
+        try:
+            return self.__user_sessions_queryset.get(id=self.session_id)
+        except:
+            return None
+
+    def get_stages_queryset(self):
+        session_model = self.__get_session_model()
+        if not session_model:
+            return []
+        stage_ids = session_model.steps
+        stages_queryset = Stage.objects.filter(id__in=stage_ids)
+
+
+

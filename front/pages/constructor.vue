@@ -100,7 +100,7 @@ export default {
       return this.$store.getters["stages/getStagesTree"]
     },
   },
-  mounted() {
+  created () {
     this.$store.dispatch("components/setButtons")
     this.$store.dispatch("components/setTexts")
     this.$store.dispatch("stages/setStagesTree")
