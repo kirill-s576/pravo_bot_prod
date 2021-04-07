@@ -17,7 +17,7 @@ class StageResponseSerializer:
     """
 
     """
-    def __init__(self, stage, language: Language = None):
+    def __init__(self, stage: Stage, language: Language = None):
         self.stage = stage
         self.language = language
         self.id: int = None

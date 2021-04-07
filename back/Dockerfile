@@ -8,7 +8,7 @@ RUN python -m pip install --upgrade pip
 
 RUN apt update
 RUN apt-get --assume-yes install python3-dev libmariadb-dev build-essential
-
+RUN sudo apt-get install wkhtmltopdf
 RUN pip install -r requirements.txt
 
 COPY . /code

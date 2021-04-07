@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report</title>
+</head>
+<body>
+    <div class="row">
+        <img src="{{ logo }}" alt="logo" class="logo">
+        <div class="title">
+            <h1>{{ title }}</h1>
+        </div>
+    </div>
+    {% for stage in stages %}
+        <div class="row">
+            <div class="question">
+                {{ stage["question"] }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="button">
+                {{ stage["button"] }}
+            </div>
+        </div>
+    {% endfor %}
+</body>
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        font-family: "Times New Roman", serif;
+    }
+    .logo {
+        width: 160px;
+        height: 160px;
+    }
+    .title {
+        padding: 5px;
+    }
+    .row {
+        display: -webkit-box;
+        display: flex;
+    }
+    .row > div {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1;
+        flex: 1;
+    }
+    .row > div:last-child {
+        margin-right: 0;
+    }
+    .question {
+        background-color: #5b6467;
+        border-radius: 5px;
+    }
+    .button {
+        background-color: #15576e;
+        border-radius: 5px;
+        width: 30%;
+    }
+    .message {
+        background-color: #8dbecd;
+        border-radius: 5px;
+    }
+</style>
+</html>
