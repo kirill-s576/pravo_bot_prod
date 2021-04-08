@@ -20,18 +20,20 @@ django.setup()
 # stat = PeriodSessionStatistic(now-delta, now)
 # print(stat.get_json())
 
-from django.db.models import Count, F
-from django.db.models.functions import TruncDate, TruncDay
-from quiz.models import Session
-from django.db import connection
-import json
+from quiz.interface import SessionUserInterface
+from quiz.interface import StageResponseSerializer
+from pdf.main import PdfFromHtmlDocument
 
 
-stat = Session.objects.all()\
-    .annotate(date=TruncDate('created_at'))\
-    .values('date')\
-    .annotate(total=Count('id'))\
-    .values('date', 'total')
-for el in stat:
-    el["date"] = el["date"].isoformat()
-print(list(stat))
+inter = SessionUserInterface("356080087", 16)
+lang = inter.get_language_model()
+stages = inter.get_stages_queryset()
+stages_json = [StageResponseSerializer(stage, lang).json() for stage in stages]
+
+rep = PdfFromHtmlDocument("/Users/kirill/own-projects/freelance/pravo_bot/back/pdf/templates", "report.html")
+rep.to_pdf(
+        pdf_path="pdf.pdf",
+        logo=rep.image_to_base64("/Users/kirill/own-projects/freelance/pravo_bot/back/pdf/images/logo.png"),
+        title="",
+        stages=stages_json
+    )

@@ -12,14 +12,28 @@
         </div>
     </div>
     {% for stage in stages %}
-        <div class="row">
+        {% if stage["button"] %}
+            <div class="row pt-10">
+                <div>
+
+                </div>
+                <div class="button">
+                    {{ stage["button"] }}
+                </div>
+            </div>
+        {% endif %}
+        {% if stage["messages"] %}
+            {% for message in stage["messages"] %}
+            <div class="row pt-10">
+                <div class="message">
+                    {{ message["text"] }}
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        <div class="row pt-10">
             <div class="question">
                 {{ stage["question"] }}
-            </div>
-        </div>
-        <div class="row">
-            <div class="button">
-                {{ stage["button"] }}
             </div>
         </div>
     {% endfor %}
@@ -51,17 +65,23 @@
         margin-right: 0;
     }
     .question {
-        background-color: #5b6467;
+        background-color: #a9a9a9;
         border-radius: 5px;
+        padding: 10px;
     }
     .button {
-        background-color: #15576e;
+        background-color: #74d7fa;
         border-radius: 5px;
-        width: 30%;
+        width: 50px;
+        padding: 10px;
     }
     .message {
         background-color: #8dbecd;
         border-radius: 5px;
+        padding: 10px;
     }
+    .pt-10 {
+        padding-top: 10px;
+     }
 </style>
 </html>
