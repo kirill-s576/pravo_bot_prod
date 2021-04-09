@@ -6,9 +6,9 @@ WORKDIR /code/
 COPY requirements.txt /code/
 RUN python -m pip install --upgrade pip
 
-RUN apt update
+RUN apt-get update && apt-get install -y apt-transport-https
 RUN apt-get --assume-yes install python3-dev libmariadb-dev build-essential
-RUN sudo apt-get install wkhtmltopdf
+RUN sudo apt-get --assume-yes install wkhtmltopdf
 RUN pip install -r requirements.txt
 
 COPY . /code
