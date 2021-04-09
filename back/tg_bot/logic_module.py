@@ -254,6 +254,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                         title=pdf_title,
                         stages=stages_json
                     )
+                    self.bot.send_message(call.message.chat.id, pdf_path)
                 with open(pdf_path, "rb") as f:
                     self.bot.send_document(call.message.chat.id, f)
             except Exception as e:
