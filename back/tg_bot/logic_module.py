@@ -361,7 +361,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     markup.row(
                         telebot.types.InlineKeyboardButton("Download", callback_data=f"report:{quiz.session.id}")
                     )
-                    self.bot.send_message(call.message.chat.id, self.get_translated_message("final_message"), markup=markup, parse_mode="html")
+                    self.bot.send_message(call.message.chat.id, self.get_translated_message("final_message"), reply_markup=markup, parse_mode="html")
                 except Exception as e:
                     self.bot.send_message(call.message.chat.id, str(e))
                     self.bot.send_message(call.message.chat.id, traceback.format_exc())
