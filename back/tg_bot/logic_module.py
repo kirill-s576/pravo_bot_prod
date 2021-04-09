@@ -228,38 +228,33 @@ class DjangoRegisterBotLogicModule(LogicModule):
         @end_of_logic_catcher
         def get_pdf_report(call):
             self.__middleware(call.message)
-            try:
-                session_id = call.data.split("report:")[1]
-                if not session_id:
-                    raise EndOfLogicException("session id required")
+            session_id = call.data.split("report:")[1]
+            if not session_id:
+                raise EndOfLogicException("session id required")
 
-                prepared_session_id = int(session_id)
-                media_path = settings.MEDIA_ROOT
-                reports_path = check_dir(os.path.join(media_path, "session_reports"))
-                pdf_path = os.path.join(reports_path, f"{session_id}.pdf")
-                if not os.path.exists(pdf_path):
-                    inter = SessionUserInterface(str(call.message.chat.id), prepared_session_id)
-                    lang = inter.get_language_model()
-                    stages = inter.get_stages_queryset()
-                    stages_json = [StageResponseSerializer(stage, lang).json() for stage in stages]
-                    templates_path = os.path.join(settings.BASE_DIR, "pdf", "templates")
-                    logo_path = os.path.join(settings.BASE_DIR, "pdf", "images", "logo.png")
-                    rep = PdfFromHtmlDocument(templates_path, "report.html")
-                    pdf_title = self.get_translated_message("pdf_title")
-                    if not pdf_title:
-                        pdf_title = ""
-                    rep.to_pdf(
-                        pdf_path=pdf_path,
-                        logo=rep.image_to_base64(logo_path),
-                        title=pdf_title,
-                        stages=stages_json
-                    )
-                    self.bot.send_message(call.message.chat.id, pdf_path)
-                with open(pdf_path, "rb") as f:
-                    self.bot.send_document(call.message.chat.id, f)
-            except Exception as e:
-                self.bot.send_message(call.message.chat.id, str(e))
-                self.bot.send_message(call.message.chat.id, traceback.format_exc())
+            prepared_session_id = int(session_id)
+            media_path = settings.MEDIA_ROOT
+            reports_path = check_dir(os.path.join(media_path, "session_reports"))
+            pdf_path = os.path.join(reports_path, f"{session_id}.pdf")
+            if not os.path.exists(pdf_path):
+                inter = SessionUserInterface(str(call.message.chat.id), prepared_session_id)
+                lang = inter.get_language_model()
+                stages = inter.get_stages_queryset()
+                stages_json = [StageResponseSerializer(stage, lang).json() for stage in stages]
+                templates_path = os.path.join(settings.BASE_DIR, "pdf", "templates")
+                logo_path = os.path.join(settings.BASE_DIR, "pdf", "images", "logo.png")
+                rep = PdfFromHtmlDocument(templates_path, "report.html")
+                pdf_title = self.get_translated_message("pdf_title")
+                if not pdf_title:
+                    pdf_title = ""
+                rep.to_pdf(
+                    pdf_path=pdf_path,
+                    logo=rep.image_to_base64(logo_path),
+                    title=pdf_title,
+                    stages=stages_json
+                )
+            with open(pdf_path, "rb") as f:
+                self.bot.send_document(call.message.chat.id, f)
 
         @bot.callback_query_handler(func=lambda call: "stage:" in call.data)
         @end_of_logic_catcher
