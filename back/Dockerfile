@@ -8,8 +8,10 @@ RUN python -m pip install --upgrade pip
 
 RUN apt-get update
 RUN apt-get --assume-yes install python3-dev libmariadb-dev build-essential
-RUN wget -O /wkhtmltox-0.12.1_linux-wheezy-amd64.deb https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.1/wkhtmltox-0.12.1_linux-wheezy-amd64.deb
-RUN dpkg -i /wkhtmltox-0.12.1_linux-wheezy-amd64.deb
+RUN wget https://s3.amazonaws.com/shopify-managemant-app/wkhtmltopdf-0.9.9-static-amd64.tar.bz2
+RUN tar xvjf wkhtmltopdf-0.9.9-static-amd64.tar.bz2
+RUN mv wkhtmltopdf-amd64 /usr/local/bin/wkhtmltopdf
+RUN chmod +x /usr/local/bin/wkhtmltopdf
 RUN pip install -r requirements.txt
 
 COPY . /code
