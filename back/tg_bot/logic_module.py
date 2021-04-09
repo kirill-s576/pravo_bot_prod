@@ -1,5 +1,7 @@
 import telebot
 from abc import ABC, abstractmethod
+import traceback
+
 
 from quiz.interface import SessionUserInterface
 from quiz.interface import StageResponseSerializer
@@ -352,13 +354,16 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 except:
                     messages_memory[str(stage.id)] = [sended_message.message_id]
                 self.quiz_interface.finish_session()
-
-                # Send finish message width download pdf button
-                markup = telebot.types.InlineKeyboardMarkup()
-                markup.row(
-                    telebot.types.InlineKeyboardButton("Download", callback_data=f"report:{self.quiz_interface.session.id}")
-                )
-                self.bot.send_message(call.message.chat.id, self.get_translated_message("final_message"), markup=markup, parse_mode="html")
+                try:
+                    # Send finish message width download pdf button
+                    markup = telebot.types.InlineKeyboardMarkup()
+                    markup.row(
+                        telebot.types.InlineKeyboardButton("Download", callback_data=f"report:{self.quiz_interface.session.id}")
+                    )
+                    self.bot.send_message(call.message.chat.id, self.get_translated_message("final_message"), markup=markup, parse_mode="html")
+                except Exception as e:
+                    self.bot.send_message(call.message.chat.id, str(e))
+                    self.bot.send_message(call.message.chat.id, traceback.format_exc())
 
             self.user.messages_memory = messages_memory
             self.user.save()
