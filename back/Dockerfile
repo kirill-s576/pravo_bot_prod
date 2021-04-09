@@ -6,9 +6,14 @@ WORKDIR /code/
 COPY requirements.txt /code/
 RUN python -m pip install --upgrade pip
 
-RUN apt-get update && apt-get install -y apt-transport-https
+RUN apt-get update
+RUN apt-get install wget
 RUN apt-get --assume-yes install python3-dev libmariadb-dev build-essential
-RUN sudo apt-get --assume-yes install wkhtmltopdf
+RUN cd /tmp && \
+  wget -nv https://downloads.wkhtmltopdf.org/0.12/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz -O wkhtmltox.tar.xz && \
+  tar -xaf wkhtmltox.tar.xz && \
+  rm -f wkhtmltox.tar.xz && \
+  mv wkhtmltox/bin/wkhtmlto* /usr/local/bin/
 RUN pip install -r requirements.txt
 
 COPY . /code
