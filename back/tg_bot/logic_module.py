@@ -355,11 +355,11 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 except:
                     messages_memory[str(stage.id)] = [sended_message.message_id]
                 try:
-                    self.quiz_interface.finish_session()
+                    quiz.finish_session()
                     # Send finish message width download pdf button
                     markup = telebot.types.InlineKeyboardMarkup()
                     markup.row(
-                        telebot.types.InlineKeyboardButton("Download", callback_data=f"report:{self.quiz_interface.session.id}")
+                        telebot.types.InlineKeyboardButton("Download", callback_data=f"report:{quiz.session.id}")
                     )
                     self.bot.send_message(call.message.chat.id, self.get_translated_message("final_message"), markup=markup, parse_mode="html")
                 except Exception as e:
