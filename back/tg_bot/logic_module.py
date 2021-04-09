@@ -237,7 +237,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 media_path = settings.MEDIA_ROOT
                 reports_path = check_dir(os.path.join(media_path, "session_reports"))
                 pdf_path = os.path.join(reports_path, f"{session_id}.pdf")
-                if os.path.exists(pdf_path):
+                if not os.path.exists(pdf_path):
                     inter = SessionUserInterface(str(call.message.chat.id), prepared_session_id)
                     lang = inter.get_language_model()
                     stages = inter.get_stages_queryset()
