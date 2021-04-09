@@ -356,9 +356,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 # Send finish message width download pdf button
                 markup = telebot.types.InlineKeyboardMarkup()
                 markup.row(
-                    telebot.types.InlineKeyboardButton("Download", callback_data=f"report:{self.quiz_interface.session_id}")
+                    telebot.types.InlineKeyboardButton("Download", callback_data=f"report:{self.quiz_interface.session.id}")
                 )
-                self.bot.send_message(call.message.chat.id, self.get_translated_message("final_message"), markup=markup)
+                self.bot.send_message(call.message.chat.id, self.get_translated_message("final_message"), markup=markup, parse_mode="html")
 
             self.user.messages_memory = messages_memory
             self.user.save()
