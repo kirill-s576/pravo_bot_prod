@@ -344,6 +344,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 self.user.memory_message_id = sended_question.message_id
             else:
                 # Finish
+                self.bot.send_message(call.message.chat.id, "Finish Line")
                 for message in messages:
                     info_text += message["text"] + "\n\n"
                 if stage.question:
