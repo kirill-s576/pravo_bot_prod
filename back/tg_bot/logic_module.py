@@ -354,8 +354,8 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     messages_memory[str(stage.id)].append(sended_message.message_id)
                 except:
                     messages_memory[str(stage.id)] = [sended_message.message_id]
-                self.quiz_interface.finish_session()
                 try:
+                    self.quiz_interface.finish_session()
                     # Send finish message width download pdf button
                     markup = telebot.types.InlineKeyboardMarkup()
                     markup.row(
