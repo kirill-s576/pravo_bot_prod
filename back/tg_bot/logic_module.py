@@ -183,29 +183,33 @@ class DjangoRegisterBotLogicModule(LogicModule):
         def quiz_restart(message):
             self.__middleware(message)
             """ Start or restart quiz """
-            if not self.user.language:
-                self.ask_language(message.chat.id)
-            lang_label = self.user.language.label
-            quiz = self.quiz_interface(lang_label, 30001, message.chat.id, self.source)
-            stage = quiz.restart()
-            markup = telebot.types.InlineKeyboardMarkup()
-            for child in stage.children:
-                markup.row(telebot.types.InlineKeyboardButton(child["button"],
-                                                              callback_data=f"stage:{stage.id}:{child['id']}"))
             try:
-                bot.delete_message(message.chat.id, self.user.memory_message_id)
-            except:
-                pass
-            sended_message = self.bot.send_message(
-                message.chat.id,
-                stage.question,
-                reply_markup=markup,
-                parse_mode="html"
-            )
-            messages_memory = dict()
-            messages_memory[str(stage.id)] = [sended_message.message_id]
-            self.user.messages_memory = messages_memory
-            self.user.save()
+                if not self.user.language:
+                    self.ask_language(message.chat.id)
+                lang_label = self.user.language.label
+                quiz = self.quiz_interface(lang_label, 30001, message.chat.id, self.source)
+                stage = quiz.restart()
+                markup = telebot.types.InlineKeyboardMarkup()
+                for child in stage.children:
+                    markup.row(telebot.types.InlineKeyboardButton(child["button"],
+                                                                  callback_data=f"stage:{stage.id}:{child['id']}"))
+                try:
+                    bot.delete_message(message.chat.id, self.user.memory_message_id)
+                except:
+                    pass
+                sended_message = self.bot.send_message(
+                    message.chat.id,
+                    stage.question,
+                    reply_markup=markup,
+                    parse_mode="html"
+                )
+                messages_memory = dict()
+                messages_memory[str(stage.id)] = [sended_message.message_id]
+                self.user.messages_memory = messages_memory
+                self.user.save()
+            except Exception as e:
+                self.bot.send_message(message.chat.id, str(e))
+                self.bot.send_message(message.chat.id, traceback.format_exc())
 
         @bot.message_handler(commands=["start"])
         @end_of_logic_catcher
