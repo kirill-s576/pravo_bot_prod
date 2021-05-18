@@ -232,6 +232,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 self.send_greeting(call.message.chat.id)
             else:
                 self.bot.send_message(call.message.chat.id, f"✅ {lang_label}", parse_mode="html")
+                start(call.message)
 
         @bot.callback_query_handler(func=lambda call: "stage:" in call.data)
         @end_of_logic_catcher
