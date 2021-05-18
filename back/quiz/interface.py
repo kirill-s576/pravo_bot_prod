@@ -17,7 +17,7 @@ class StageResponseSerializer:
     """
 
     """
-    def __init__(self, stage, language: Language = None):
+    def __init__(self, stage: Stage, language: Language = None):
         self.stage = stage
         self.language = language
         self.id: int = None
@@ -232,4 +232,43 @@ class PeriodSessionStatistic(SessionStatistic):
     def __init__(self, date_from: datetime.datetime, date_to: datetime.datetime):
         queryset = Session.objects.filter(created_at__gte=date_from, created_at__lte=date_to)
         super().__init__(queryset)
+
+
+class SessionUserInterface:
+
+    def __init__(self, user_id, session_id):
+        self.user_id = user_id
+        self.session_id = session_id
+        self.session_model = self.__get_session_model()
+
+    @property
+    def __user_sessions_queryset(self):
+        return Session.objects.filter(user_id=self.user_id)
+
+    def __get_session_model(self):
+        try:
+            return self.__user_sessions_queryset.get(id=self.session_id)
+        except:
+            return None
+
+    def get_all_sessions(self):
+        return self.__user_sessions_queryset
+
+    def get_stages_queryset(self):
+        if not self.session_model:
+            return []
+        stage_ids = self.session_model.steps
+        stages_queryset = Stage.objects.filter(id__in=stage_ids)
+        output_stages = []
+        for stage_id in stage_ids:
+            needed_stage = list(filter(lambda x: x.id == stage_id, stages_queryset))[0]
+            output_stages.append(needed_stage)
+        return output_stages
+
+    def get_language_model(self):
+        if self.session_model:
+            return self.session_model.language
+        else:
+            return None
+
 

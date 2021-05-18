@@ -6,9 +6,9 @@
     <div class="d-flex flex-row align-center" style="width: 50%">
       <h3>Stage Title:</h3>
       <v-text-field v-model="stageData.title" class="ml-4"/>
-      <v-btn icon>
-        <v-icon large color="success">mdi-content-save</v-icon>
-      </v-btn>
+<!--      <v-btn icon>-->
+<!--        <v-icon large color="success">mdi-content-save</v-icon>-->
+<!--      </v-btn>-->
     </div>
 
     <div class="ma-4">
@@ -17,9 +17,9 @@
       <v-row class="d-flex flex-column mb-2">
         <v-card>
           <v-card-title>
-            <v-btn icon>
-              <v-icon large color="success">mdi-content-save</v-icon>
-            </v-btn>
+<!--            <v-btn icon>-->
+<!--              <v-icon large color="success">mdi-content-save</v-icon>-->
+<!--            </v-btn>-->
             Кнопка
           </v-card-title>
           <v-card-text>
@@ -39,7 +39,7 @@
       <v-row class="d-flex flex-column mb-2">
         <v-card>
           <div class="d-flex flex-row justify-space-between">
-            <v-card-title>Сообщения, ответы, пояснения</v-card-title>
+            <v-card-title>Информационные сообщения</v-card-title>
             <v-btn icon class="mt-4">
               <v-icon large>mdi-plus-circle-outline</v-icon>
             </v-btn>
@@ -66,9 +66,9 @@
       <v-row class="d-flex flex-column mb-2">
         <v-card >
           <v-card-title>
-            <v-btn icon>
-              <v-icon large color="success">mdi-content-save</v-icon>
-            </v-btn>
+<!--            <v-btn icon>-->
+<!--              <v-icon large color="success">mdi-content-save</v-icon>-->
+<!--            </v-btn>-->
             Вопрос
           </v-card-title>
 <!--          {{stageData.question}}-->

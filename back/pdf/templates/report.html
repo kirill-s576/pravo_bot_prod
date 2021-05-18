@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report</title>
+</head>
+<body>
+    <div class="row">
+        <img src="{{ logo }}" alt="logo" class="logo">
+        <div class="title">
+            <h1>{{ title }}</h1>
+        </div>
+    </div>
+    {% for stage in stages %}
+        {% if stage["button"] %}
+            <div class="row pt-10">
+                <div>
+
+                </div>
+                <div class="button">
+                    {{ stage["button"] }}
+                </div>
+            </div>
+        {% endif %}
+        {% if stage["messages"] %}
+            {% for message in stage["messages"] %}
+            <div class="row pt-10">
+                <div class="message">
+                    {{ message["text"] }}
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        <div class="row pt-10">
+            <div class="question">
+                {{ stage["question"] }}
+            </div>
+        </div>
+    {% endfor %}
+</body>
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        font-family: "Times New Roman", serif;
+    }
+    .logo {
+        width: 160px;
+        height: 160px;
+    }
+    .title {
+        padding: 5px;
+    }
+    .row {
+        display: -webkit-box;
+        display: flex;
+    }
+    .row > div {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1;
+        flex: 1;
+    }
+    .row > div:last-child {
+        margin-right: 0;
+    }
+    .question {
+        background-color: #a9a9a9;
+        border-radius: 5px;
+        padding: 10px;
+    }
+    .button {
+        background-color: #74d7fa;
+        border-radius: 5px;
+        width: 50px;
+        padding: 10px;
+    }
+    .message {
+        background-color: #8dbecd;
+        border-radius: 5px;
+        padding: 10px;
+    }
+    .pt-10 {
+        padding-top: 10px;
+     }
+</style>
+</html>

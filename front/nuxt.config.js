@@ -23,10 +23,8 @@ export default {
   ],
 
   plugins: [
-    { src: '~plugins/vuedraggable.js', ssr: false },
-    { src: '~plugins/vueTreeChart.js', ssr: false },
-    { src: '~plugins/axios.js', ssr: false },
     '~plugins/local-storage.js',
+    { src: '~plugins/axios.js', ssr: false },
     { src: '~plugins/apexcharts.js', ssr: false },
   ],
 
