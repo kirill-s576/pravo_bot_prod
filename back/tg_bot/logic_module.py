@@ -231,7 +231,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             if first_selection:
                 self.send_greeting(call.message.chat.id)
             else:
-                self.bot.send_message(call.message.chat.id, "✅", parse_mode="html")
+                self.bot.send_message(call.message.chat.id, f"✅ {lang_label}", parse_mode="html")
 
         @bot.callback_query_handler(func=lambda call: "stage:" in call.data)
         @end_of_logic_catcher
