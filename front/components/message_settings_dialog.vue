@@ -131,7 +131,7 @@
         },
         updateText( id, title, text) {
           this.$axios.put(
-            "/quiz/messages/" + id + "/",
+            '/quiz/translates/message/' + translateId + "/",
             {
               title: title,
               default_text: text

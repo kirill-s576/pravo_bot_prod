@@ -7,10 +7,10 @@ export default function ({ $axios, app, store}) {
     })
     $axios.onError(error => {
         if(error.response.status === 403) {
-          console.log(error)
+
         }
         if(error.response.status === 401) {
-          console.log(error)
+
         }
     });
 }

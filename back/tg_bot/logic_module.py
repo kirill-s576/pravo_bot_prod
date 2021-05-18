@@ -222,9 +222,16 @@ class DjangoRegisterBotLogicModule(LogicModule):
             """
             self.__middleware(call.message)
             lang_label = call.data.split("lang:")[1]
+            if self.user.language:
+                first_selection = False
+            else:
+                first_selection = True
             self.save_selected_language(call.message.chat.id, lang_label)
             self.bot.delete_message(call.message.chat.id, call.message.message_id)
-            self.send_greeting(call.message.chat.id)
+            if first_selection:
+                self.send_greeting(call.message.chat.id)
+            else:
+                self.bot.send_message(call.message.chat.id, "✅", parse_mode="html")
 
         @bot.callback_query_handler(func=lambda call: "stage:" in call.data)
         @end_of_logic_catcher

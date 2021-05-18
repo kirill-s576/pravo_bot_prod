@@ -10,3 +10,5 @@ gunicorn
 pytelegrambotapi
 pdfkit
 jinja2
+pdfkit
+jinja2
