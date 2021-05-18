@@ -1,6 +1,11 @@
 from rest_framework.routers import SimpleRouter
-from .views import BotViewSet, bot_webhook
 from django.urls import path
+from .views import (BotViewSet,
+                    BotLanguageViewSet,
+                    BotMessageViewSet,
+                    BotTranslateViewSet,
+                    bot_webhook)
+
 
 urlpatterns = [
     path('bot/<token>/', bot_webhook, name="bot_webhook")
@@ -8,5 +13,8 @@ urlpatterns = [
 
 router = SimpleRouter()
 router.register("", BotViewSet, basename="Bot")
+router.register("languages", BotLanguageViewSet, basename="Language")
+router.register("messages", BotMessageViewSet, basename="Message")
+router.register("translates", BotTranslateViewSet, basename="Translate")
 urlpatterns += router.urls
 

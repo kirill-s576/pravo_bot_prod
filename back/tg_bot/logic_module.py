@@ -38,6 +38,8 @@ class LogicModule(ABC):
 
 class DjangoRegisterBotLogicModule(LogicModule):
 
+    FIRST_STAGE_ID = 30001
+
     def __init__(self, bot, language_model, message_model, user_model, quiz_interface, source: str = 'telegram', **kwargs):
         super().__init__(bot)
         self.language_model = language_model
@@ -51,6 +53,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
         """
         Middleware layer.
         We should use it in each bot handler.
+        - Create user if not exists
+        - Append user as class attr
+        - Ask language if user created.
         """
         defaults = {
             "user_name": getattr(message.chat, "username", "-"),
@@ -78,7 +83,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
     def ask_language(self, chat_id):
         """
-
+        Send menu with bot languages.
         """
         markup = telebot.types.InlineKeyboardMarkup()
         for language in self.languages:
@@ -95,13 +100,18 @@ class DjangoRegisterBotLogicModule(LogicModule):
         self.user.save()
 
     def send_greeting(self, chat_id):
+        """
+        Send greeting message.
+        """
         greeting_text = self.get_translated_message("greeting")
         if greeting_text:
             self.bot.send_message(chat_id, greeting_text)
             self.send_menu(chat_id)
 
     def send_menu(self, chat_id):
-
+        """
+        Send menu message(Reply keyboard)
+        """
         markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
         markup.row(
             telebot.types.KeyboardButton(self.get_translated_message("change_language_button")),
@@ -133,7 +143,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             }, ...
         ]
         """
-        queryset = self.language_model.objects.all()
+        queryset = self.language_model.objects.filter(is_active=True)
         return queryset.values("name", "label")
 
     def process_with_logic(self) -> telebot.TeleBot:
@@ -141,7 +151,6 @@ class DjangoRegisterBotLogicModule(LogicModule):
         This method appends logic to bot.
         """
         bot = self.bot
-
 
         @bot.message_handler(commands=["menu"])
         @end_of_logic_catcher
@@ -160,19 +169,22 @@ class DjangoRegisterBotLogicModule(LogicModule):
         @bot.message_handler(commands=["important"])
         @end_of_logic_catcher
         def important(message):
-            """ /about command handler """
+            """ /important command handler """
             self.__middleware(message)
             self.send_important(message.chat.id)
 
         @bot.message_handler(commands=["quiz"])
         @end_of_logic_catcher
         def quiz_restart(message):
+            """
+            /quiz command handler
+            Start or restart quiz.
+            """
             self.__middleware(message)
-            """ Start or restart quiz """
             if not self.user.language:
                 self.ask_language(message.chat.id)
             lang_label = self.user.language.label
-            quiz = self.quiz_interface(lang_label, 30001, message.chat.id, self.source)
+            quiz = self.quiz_interface(lang_label, self.FIRST_STAGE_ID, message.chat.id, self.source)
             stage = quiz.restart()
             markup = telebot.types.InlineKeyboardMarkup()
             for child in stage.children:
@@ -204,6 +216,10 @@ class DjangoRegisterBotLogicModule(LogicModule):
         @bot.callback_query_handler(func=lambda call: "lang:" in call.data)
         @end_of_logic_catcher
         def language_handler(call):
+            """
+            Handle language choose.
+            Set choosed language to user.
+            """
             self.__middleware(call.message)
             lang_label = call.data.split("lang:")[1]
             self.save_selected_language(call.message.chat.id, lang_label)
@@ -225,13 +241,12 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
             # Initialize quiz interface.
             lang_label = self.user.language.label
-            quiz = self.quiz_interface(lang_label, 30001, call.message.chat.id, self.source)
+            quiz = self.quiz_interface(lang_label, self.FIRST_STAGE_ID, call.message.chat.id, self.source)
 
             # Get user memory slot.
             messages_memory = self.user.messages_memory
 
             if to_stage_id != 0:
-
                 # Get next stage for view
                 stage = quiz.get_next_stage(from_stage_id, to_stage_id)
 
@@ -247,7 +262,6 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 except:
                     messages_memory[str(from_stage_id)] = [sended_message.message_id]
             else:
-
                 # Get previous stage for view
                 stage, removed_stage_id = quiz.get_previous_stage()
 
@@ -273,7 +287,6 @@ class DjangoRegisterBotLogicModule(LogicModule):
             info_text = "📖 -  "
 
             if len(stage.children) != 0:
-
                 # Send info message.
                 if len(messages) > 0:
                     for message in messages:
@@ -289,7 +302,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 for child in stage.children:
                     markup.row(telebot.types.InlineKeyboardButton(child["button"],
                                                                   callback_data=f"stage:{stage.id}:{child['id']}"))
-                if len(stage.children) != 0 and stage.id != 30001:
+                if len(stage.children) != 0 and stage.id != self.FIRST_STAGE_ID:
                     markup.row(
                         telebot.types.InlineKeyboardButton("🔙 Back",
                                                            callback_data=f"stage:{stage.id}:0")
@@ -297,6 +310,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 sended_question = self.bot.send_message(call.message.chat.id, stage.question, reply_markup=markup, parse_mode="html")
                 self.user.memory_message_id = sended_question.message_id
             else:
+                # ! Final messages.
                 for message in messages:
                     info_text += message["text"] + "\n\n"
                 if stage.question:
@@ -312,6 +326,9 @@ class DjangoRegisterBotLogicModule(LogicModule):
 
         @bot.message_handler(func=lambda message: True, content_types=['text'])
         def menu_handler(message):
+            """
+            Trigger for menu endpoint.
+            """
             db_message = self.message_model.get_message_by_translate_text(message.text)
             if message:
                 label = db_message.label
@@ -324,7 +341,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 elif label == "change_language_button":
                     self.ask_language(message.chat.id)
             else:
-                bot.send_message(message.chat.id, "Даже и не знаю, что на это ответить...")
+                bot.send_message(message.chat.id, "🤷")
         return bot
 
 

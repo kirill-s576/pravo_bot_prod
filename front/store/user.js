@@ -33,7 +33,6 @@ export const actions = {
       .then(response => {
         context.commit('SET_USER_DATA', response.data)
       })
-
   },
   async login ( context, { email, password} ) {
     const {

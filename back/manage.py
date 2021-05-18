@@ -2,10 +2,10 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-# from dotenv import load_dotenv
-# from pathlib import Path
-# env_path = Path('/Users/kirill/own-projects/freelance/pravo_bot/environments.env')
-# load_dotenv(dotenv_path=env_path)
+from dotenv import load_dotenv
+from pathlib import Path
+env_path = Path('/Users/kirill/own_projects/pravo_bot/environments.env')
+load_dotenv(dotenv_path=env_path)
 
 
 def main():
