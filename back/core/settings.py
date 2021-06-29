@@ -1,6 +1,9 @@
 from pathlib import Path
 import os
 import datetime
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -132,3 +135,10 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(hours=24),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(hours=24)
 }
+
+sentry_sdk.init(
+    dsn="https://b21ffe78f997453fa0b0486fea7a516d@o502412.ingest.sentry.io/5839970",
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True
+)
