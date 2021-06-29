@@ -257,7 +257,7 @@ class DjangoRegisterBotLogicModule(LogicModule):
             media_path = settings.MEDIA_ROOT
             reports_path = check_dir(os.path.join(media_path, "session_reports"))
             pdf_path = os.path.join(reports_path, f"{session_id}.pdf")
-            if os.path.exists(pdf_path):
+            if not os.path.exists(pdf_path):
                 inter = SessionUserInterface(str(call.message.chat.id), prepared_session_id)
                 lang = inter.get_language_model()
                 stages = inter.get_stages_queryset()
@@ -371,16 +371,15 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     messages_memory[str(stage.id)].append(sended_message.message_id)
                 except:
                     messages_memory[str(stage.id)] = [sended_message.message_id]
-                self.quiz_interface.finish_session()
+
+                quiz.finish_session()
                 # Send finish message width download pdf button
                 markup = telebot.types.InlineKeyboardMarkup()
                 markup.row(
-                    telebot.types.InlineKeyboardButton("Download",
-                                                       callback_data=f"report:{self.quiz_interface.session_id}")
+                    telebot.types.InlineKeyboardButton("Download", callback_data=f"report:{quiz.session.id}")
                 )
-                self.bot.send_message(call.message.chat.id,
-                                      self.get_translated_message("final_message"),
-                                      reply_markup=markup)
+                self.bot.send_message(call.message.chat.id, self.get_translated_message("final_message"),
+                                      reply_markup=markup, parse_mode="html")
             self.user.messages_memory = messages_memory
             self.user.save()
 
