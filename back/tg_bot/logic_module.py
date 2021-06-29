@@ -1,12 +1,23 @@
 import telebot
 from abc import ABC, abstractmethod
-from quiz.interface import BasicInterface
-import traceback
+
+from quiz.interface import SessionUserInterface
+from quiz.interface import StageResponseSerializer
+from pdf.main import PdfFromHtmlDocument
+
+from django.conf import settings
+import os
 
 
 class EndOfLogicException(Exception):
     pass
 
+def check_dir(path):
+    if os.path.exists(path):
+        return path
+    else:
+        os.mkdir(path)
+        return path
 
 def end_of_logic_catcher(func):
     def wrapper(*args, **kwargs):
@@ -234,6 +245,38 @@ class DjangoRegisterBotLogicModule(LogicModule):
                 self.bot.send_message(call.message.chat.id, f"✅ {lang_label}", parse_mode="html")
                 start(call.message)
 
+        @bot.callback_query_handler(func=lambda call: "report:" in call.data)
+        @end_of_logic_catcher
+        def get_pdf_report(call):
+            self.__middleware(call.message)
+            session_id = call.data.split("report:")[1]
+            if not session_id:
+                raise EndOfLogicException("session id required")
+
+            prepared_session_id = int(session_id)
+            media_path = settings.MEDIA_ROOT
+            reports_path = check_dir(os.path.join(media_path, "session_reports"))
+            pdf_path = os.path.join(reports_path, f"{session_id}.pdf")
+            if os.path.exists(pdf_path):
+                inter = SessionUserInterface(str(call.message.chat.id), prepared_session_id)
+                lang = inter.get_language_model()
+                stages = inter.get_stages_queryset()
+                stages_json = [StageResponseSerializer(stage, lang).json() for stage in stages]
+                templates_path = os.path.join(settings.BASE_DIR, "pdf", "templates")
+                logo_path = os.path.join(settings.BASE_DIR, "pdf", "images", "logo.png")
+                rep = PdfFromHtmlDocument(templates_path, "report.html")
+                pdf_title = self.get_translated_message("pdf_title")
+                if not pdf_title:
+                    pdf_title = ""
+                rep.to_pdf(
+                    pdf_path=pdf_path,
+                    logo=rep.image_to_base64(logo_path),
+                    title=pdf_title,
+                    stages=stages_json
+                )
+            with open(pdf_path, "rb") as f:
+                self.bot.send_document(call.message.chat.id, f)
+
         @bot.callback_query_handler(func=lambda call: "stage:" in call.data)
         @end_of_logic_catcher
         def quiz_handler(call):
@@ -328,7 +371,16 @@ class DjangoRegisterBotLogicModule(LogicModule):
                     messages_memory[str(stage.id)].append(sended_message.message_id)
                 except:
                     messages_memory[str(stage.id)] = [sended_message.message_id]
-
+                self.quiz_interface.finish_session()
+                # Send finish message width download pdf button
+                markup = telebot.types.InlineKeyboardMarkup()
+                markup.row(
+                    telebot.types.InlineKeyboardButton("Download",
+                                                       callback_data=f"report:{self.quiz_interface.session_id}")
+                )
+                self.bot.send_message(call.message.chat.id,
+                                      self.get_translated_message("final_message"),
+                                      reply_markup=markup)
             self.user.messages_memory = messages_memory
             self.user.save()
 
