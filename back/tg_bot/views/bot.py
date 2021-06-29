@@ -36,7 +36,7 @@ class BotViewSet(ViewSet):
 
     # Initialized interface for bor control
     bot_interface = Bot(BOT_TOKEN, DjangoRegisterBotLogicModule, BOT_LOGIC_MODULE_KWARGS)
-    authentication_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
 
     @swagger_auto_schema(
         request_body=SetWebhookSerializer,
