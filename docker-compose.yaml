@@ -30,6 +30,13 @@ services:
       - web_nw
     restart: always
 
+  front:
+    build: ./front
+    command: npm start
+    restart: always
+    ports:
+      - "3000:3000"
+
 volumes:
   static_volume:
   media_volume:
