@@ -65,7 +65,7 @@ class BotViewSet(ViewSet):
     @action(methods=["GET"], detail=False)
     def get_bot_info(self, request):
         response = self.bot_interface.get_web_hook_info()
-        return Response({"telegram_response": response})
+        return Response({"telegram_response": response.__dict__})
 
 
 @csrf_exempt
