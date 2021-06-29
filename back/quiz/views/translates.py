@@ -76,7 +76,7 @@ class MessageTranslationViewSet(ViewSet):
 
 class QButtonTranslationViewSet(ViewSet):
 
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         responses={
